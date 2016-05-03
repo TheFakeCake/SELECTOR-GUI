@@ -1,24 +1,865 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow" >
-  <property name="geometry" >
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>624</width>
+    <height>695</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>MainWindow</string>
+  <property name="windowTitle">
+   <string>SELECTOR-GUI</string>
   </property>
-  <widget class="QMenuBar" name="menuBar" />
-  <widget class="QToolBar" name="mainToolBar" />
-  <widget class="QWidget" name="centralWidget" />
-  <widget class="QStatusBar" name="statusBar" />
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="settingsTab">
+       <attribute name="title">
+        <string>Settings</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QGroupBox" name="generalGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>General</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="numberOfSimulationsLabel">
+             <property name="text">
+              <string>Number of simulations :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QSpinBox" name="numberOfSimulationsSpinBox">
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>999999999</number>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="numberOfGenerationsLabel">
+             <property name="text">
+              <string>Number of generations :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="numberOfGenerationsSpinBox">
+             <property name="accelerated">
+              <bool>true</bool>
+             </property>
+             <property name="minimum">
+              <number>1</number>
+             </property>
+             <property name="maximum">
+              <number>999999999</number>
+             </property>
+             <property name="singleStep">
+              <number>10</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="geneticsGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Genetics</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <layout class="QFormLayout" name="formLayout_2">
+             <item row="0" column="0">
+              <widget class="QLabel" name="numberOfInitialAllelesLabel">
+               <property name="text">
+                <string>Number of initial alleles :</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="numberOfInitialAllelesSpinBox">
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>999999999</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QRadioButton" name="uniquePoolRadioButton">
+               <property name="toolTip">
+                <string>All initial population sources are constituted from one single gene pool</string>
+               </property>
+               <property name="text">
+                <string>Unique allele pool</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QRadioButton" name="multiplePoolRadioButton">
+               <property name="toolTip">
+                <string>Each initial population group is derived from independent ancestral gene pools</string>
+               </property>
+               <property name="text">
+                <string>Multiple allele pools</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="mutationRateLabel">
+               <property name="toolTip">
+                <string>Defines the probability that new alleles appear (mutation rate per individual per generation)</string>
+               </property>
+               <property name="text">
+                <string>Mutation rate :</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QDoubleSpinBox" name="mutationRateDoubleSpinBox">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="singleStep">
+                <double>0.050000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="initialFrequencyCheckBox">
+             <property name="text">
+              <string>Set initial frequency of first allele (a1)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="firstAlleleFrequencyWidget" native="true">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_4">
+              <property name="leftMargin">
+               <number>25</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <item>
+                 <widget class="QRadioButton" name="fixedFrequencyRadioButton">
+                  <property name="toolTip">
+                   <string>Initial frequency of the first allele of each deme will be the same</string>
+                  </property>
+                  <property name="text">
+                   <string>Fixed</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="randomFrequencyRadioButton">
+                  <property name="toolTip">
+                   <string>Initial frequency of the first allele of each deme will be randomized between the given interval</string>
+                  </property>
+                  <property name="text">
+                   <string>Random</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QStackedWidget" name="firstAlleleFrequencyStackedWidget">
+                <widget class="QWidget" name="fixedFrequencyPage">
+                 <layout class="QVBoxLayout" name="verticalLayout_5">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="fixedFrequencyDoubleSpinBox">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.050000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+                <widget class="QWidget" name="randomFrequencyPage">
+                 <layout class="QHBoxLayout" name="horizontalLayout_5">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="intervalFrequency1DoubleSpinBox">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.050000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QLabel" name="label_4">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>⟷</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QDoubleSpinBox" name="intervalFrequency2DoubleSpinBox_2">
+                    <property name="decimals">
+                     <number>3</number>
+                    </property>
+                    <property name="maximum">
+                     <double>1.000000000000000</double>
+                    </property>
+                    <property name="singleStep">
+                     <double>0.050000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="selectionGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Selection</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_3">
+           <item row="0" column="0">
+            <widget class="QLabel" name="selectionModelLabel">
+             <property name="text">
+              <string>Model :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QComboBox" name="selectionModelComboBox">
+             <property name="sizeAdjustPolicy">
+              <enum>QComboBox::AdjustToContents</enum>
+             </property>
+             <item>
+              <property name="text">
+               <string>SOS</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>FDS</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>DPS</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="1" column="0">
+            <widget class="QLabel" name="heterogeneityLabel">
+             <property name="text">
+              <string>Heterogeneity :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1">
+            <widget class="QComboBox" name="heterogeneityComboBox">
+             <item>
+              <property name="text">
+               <string>Uniform</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Latitudinal</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Longitudinal</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QLabel" name="coefficientLabel">
+             <property name="text">
+              <string>Coefficients :</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QStackedWidget" name="coefficientStackedWidget">
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <widget class="QWidget" name="uniformCoefficientPage">
+              <layout class="QHBoxLayout" name="horizontalLayout_4">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QDoubleSpinBox" name="uniformCoefficientDoubleSpinBox">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="latitudinalGradientPage">
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QDoubleSpinBox" name="northCoefficientDoubleSpinBox">
+                 <property name="toolTip">
+                  <string>Selection coefficient in the northern demes</string>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label">
+                 <property name="text">
+                  <string>⟶</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="southCoefficientDoubleSpinBox">
+                 <property name="toolTip">
+                  <string>Selection coefficient in the southern demes</string>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+             <widget class="QWidget" name="longitudinalGradientPage">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QDoubleSpinBox" name="eastCoefficientDoubleSpinbox">
+                 <property name="toolTip">
+                  <string>Selection coefficient in the eastern demes</string>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>⟶</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="westCoefficientDoubleSpinBox">
+                 <property name="toolTip">
+                  <string>Selection coefficient in the western demes</string>
+                 </property>
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.050000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="outputGroupBox">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="title">
+           <string>Output</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout_4">
+           <item row="0" column="0">
+            <widget class="QCheckBox" name="completeHistoryCheckBox">
+             <property name="text">
+              <string>Complete history of last simulation</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="groupsTab">
+       <attribute name="title">
+        <string>Groups</string>
+       </attribute>
+      </widget>
+      <widget class="QWidget" name="routesTab">
+       <attribute name="title">
+        <string>Routes</string>
+       </attribute>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBox">
+        <item>
+         <property name="text">
+          <string>Groups</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Initial populations</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Carrying capacities</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Growth rates</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Migration rates</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Display mode :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="3" column="0" colspan="3">
+       <widget class="QGraphicsView" name="graphicsView"/>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>624</width>
+     <height>27</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <widget class="QMenu" name="menu_OpenRecentSimulation">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="title">
+      <string>Open recent simulation ...</string>
+     </property>
+    </widget>
+    <addaction name="action_NewSimulation"/>
+    <addaction name="action_OpenSimulation"/>
+    <addaction name="menu_OpenRecentSimulation"/>
+    <addaction name="action_Save"/>
+    <addaction name="action_SaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="action_Exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Simulation">
+    <property name="geometry">
+     <rect>
+      <x>384</x>
+      <y>105</y>
+      <width>236</width>
+      <height>100</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>&amp;Simulation</string>
+    </property>
+    <addaction name="action_RunPreviewSimulation"/>
+    <addaction name="action_RunSimulation"/>
+   </widget>
+   <widget class="QMenu" name="menu_Map">
+    <property name="title">
+     <string>&amp;Map</string>
+    </property>
+    <addaction name="action_LoadASCIIRasterFile"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_OpenUserManual"/>
+    <addaction name="separator"/>
+    <addaction name="action_About"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Simulation"/>
+   <addaction name="menu_Map"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_NewSimulation"/>
+   <addaction name="action_OpenSimulation"/>
+   <addaction name="action_Save"/>
+   <addaction name="separator"/>
+   <addaction name="action_RunPreviewSimulation"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="action_Exit">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/System-log-out.svg</normaloff>:/icons/System-log-out.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="action_NewSimulation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Document-new.svg</normaloff>:/icons/Document-new.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New simulation</string>
+   </property>
+   <property name="toolTip">
+    <string>New simulation (CTRL+N)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_OpenSimulation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Document-open.svg</normaloff>:/icons/Document-open.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Open simulation</string>
+   </property>
+  </action>
+  <action name="action_Save">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Document-save.svg</normaloff>:/icons/Document-save.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="toolTip">
+    <string>Save (CTRL+S)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_SaveAs">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Document-save-as.svg</normaloff>:/icons/Document-save-as.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Save as ...</string>
+   </property>
+  </action>
+  <action name="action_LoadASCIIRasterFile">
+   <property name="text">
+    <string>Load &amp;ASCII raster file</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Help-browser.svg</normaloff>:/icons/Help-browser.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;About SELECTOR-GUI</string>
+   </property>
+  </action>
+  <action name="action_OpenUserManual">
+   <property name="text">
+    <string>Open &amp;user manual</string>
+   </property>
+  </action>
+  <action name="action_RunPreviewSimulation">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/Media-playback-start.svg</normaloff>:/icons/Media-playback-start.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Run &amp;preview simulation</string>
+   </property>
+   <property name="toolTip">
+    <string>Run preview simulation (CTRL+R)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="action_RunSimulation">
+   <property name="text">
+    <string>&amp;Run</string>
+   </property>
+  </action>
  </widget>
- <layoutDefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
- <resources/>
- <connections/>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>action_Exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heterogeneityComboBox</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>coefficientStackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>327</x>
+     <y>544</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>327</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>initialFrequencyCheckBox</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>firstAlleleFrequencyWidget</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>91</x>
+     <y>359</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>175</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

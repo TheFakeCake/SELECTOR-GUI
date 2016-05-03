@@ -15,6 +15,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void on_fixedFrequencyRadioButton_toggled(bool b);
+
 private:
     Ui::MainWindow *ui;
 };

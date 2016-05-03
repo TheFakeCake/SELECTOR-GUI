@@ -1,0 +1,27 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/Document-new.svg</file>
+        <file>icons/Document-save.svg</file>
+        <file>icons/Document-save-as.svg</file>
+        <file>icons/Edit-copy.svg</file>
+        <file>icons/Edit-copy_purple.svg</file>
+        <file>icons/Edit-cut.svg</file>
+        <file>icons/Edit-delete.svg</file>
+        <file>icons/Edit-delete-2.svg</file>
+        <file>icons/Edit-find.svg</file>
+        <file>icons/Edit-find-replace.svg</file>
+        <file>icons/Edit-paste.svg</file>
+        <file>icons/Edit-redo.svg</file>
+        <file>icons/Edit-undo.svg</file>
+        <file>icons/Folder.svg</file>
+        <file>icons/Folder-new.svg</file>
+        <file>icons/Media-playback-start.svg</file>
+        <file>icons/Preferences-system.svg</file>
+        <file>icons/System-log-out.svg</file>
+        <file>icons/System-search.svg</file>
+        <file>icons/View-fullscreen.svg</file>
+        <file>icons/View-refresh.svg</file>
+        <file>icons/Document-open.svg</file>
+        <file>icons/Help-browser.svg</file>
+    </qresource>
+</RCC>

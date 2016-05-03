@@ -30,3 +30,6 @@ HEADERS  += mainwindow.h \
     ModifierDeme.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    icons.qrc
