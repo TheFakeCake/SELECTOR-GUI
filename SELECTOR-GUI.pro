@@ -13,8 +13,16 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    simulationmodel.cpp \
+    deme.cpp \
+    map.cpp \
+    selection.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    simulationmodel.h \
+    deme.h \
+    map.h \
+    selection.h
 
 FORMS    += mainwindow.ui
