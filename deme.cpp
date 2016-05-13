@@ -14,6 +14,7 @@ Deme::Deme(unsigned long x, unsigned long y) : Deme(x, y, 0, 0, 0.0, 0.0, 1, 0)
 Deme::Deme(unsigned long x, unsigned long y, unsigned long initialPopulation, unsigned long carryingCapacity,
            double growthRate, double migrationRate, unsigned long group, unsigned long sampleSize)
 {
+    m_enabled = true;
     move(x, y);
     setInitialPopulation(initialPopulation);
     setCarryingCapacity(carryingCapacity);
@@ -26,14 +27,18 @@ Deme::Deme(unsigned long x, unsigned long y, unsigned long initialPopulation, un
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 QString Deme::toString() const
 {
-    return QString("%1 %2 %3 %4 %5 %6").arg(m_initialPopulation).arg(m_carryingCapacity).arg(m_growRate)
-                  .arg(m_migrationRate).arg(m_group).arg(m_sampleSize);
+    return QString("%1 %2 %3 %4 %5 %6").arg(m_initialPopulation)
+                                       .arg(m_enabled ? m_carryingCapacity : -1)
+                                       .arg(m_growRate)
+                                       .arg(m_migrationRate)
+                                       .arg(m_group)
+                                       .arg(m_sampleSize);
 }
 
 ///////////////////////////////////////////// GETTERS //////////////////////////////////////////////
 bool Deme::isEnabled() const
 {
-    return m_carryingCapacity != 0;
+    return m_enabled;
 }
 
 unsigned long Deme::x() const
@@ -77,6 +82,12 @@ unsigned long Deme::sampleSize() const
 }
 
 ////////////////////////////////////////////// SETTERS /////////////////////////////////////////////
+bool Deme::enable(bool b)
+{
+    m_enabled = b;
+    return true;
+}
+
 bool Deme::move(unsigned long x, unsigned long y)
 {
     m_x = x;

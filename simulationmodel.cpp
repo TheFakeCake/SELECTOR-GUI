@@ -24,14 +24,14 @@ bool SimulationModel::loadFromFiles(QString directory)
 bool SimulationModel::writeToFiles(QString directory)
 {
     int i;
-    QFile paramFile(directory + "/" + SELECTOR_PARAM_FILE);
+    QFile file(directory + "/" + SELECTOR_PARAM_FILE);
 
-    if (!paramFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         return false;
     }
 
-    QTextStream out(&paramFile);
+    QTextStream out(&file);
     out << "// GENERAL SETTINGS\n"
         << m_nbSimulations << "\t// Number of simulations\n"
         << m_nbGenerations << "\t// Number of generations\n"
@@ -66,9 +66,8 @@ bool SimulationModel::writeToFiles(QString directory)
 
     // Groups
     std::map<unsigned long, std::vector<Deme*> > groups = m_map.groups();
-    out << groups.size() << "\t// Number of population groups\n";
-
-    // TODO: Demes from same group
+    out << groups.size() << "\t// Number of population groups\n"
+        << "0\t// All demes within a group have the same demography. 0: No | 1: Yes\n";
 
     // Routes
     Map::Routes routes = m_map.routes();
@@ -89,23 +88,24 @@ bool SimulationModel::writeToFiles(QString directory)
         << routesLine << "\n";
 
     // Poulation structures
-    std::list<unsigned long> eventList = m_map.eventList();
-    out << eventList.size() << "\t// Number of different population structures to load\n";
-    i = 1;
-    for (auto it = eventList.begin(); it != eventList.end(); it++, i++)
+    std::list<unsigned long> generations = m_map.modificationGenerations();
+    out << generations.size() + 1 << "\t// Number of different population structures to load\n"
+        << "1\t0\n";
+    i = 2;
+    for (auto it = generations.begin(); it != generations.end(); it++, i++)
     {
         out << i << "\t" << *it << "\n";
     }
+    file.close();
 
-    paramFile.close();
-
-    QFile structureFile(directory + "/" + QString(SELECTOR_STRUCTURE_FILE).arg(1));
-    if (!structureFile.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+    // Structure file 1
+    file.setFileName(directory + "/" + QString(SELECTOR_STRUCTURE_FILE).arg(1));
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
     {
         return false;
     }
-    out.setDevice(&structureFile);
-
+    out << "// Population characteristics\n"
+        << "// Initial size (positive int), Carrying capacity K (positive int), growth rate r ([0,1]),migration rate m ([0,1]), group of demes, sample size\n";
     for (unsigned long y = 0; y < m_map.height(); y++)
     {
         for (unsigned long x = 0; x < m_map.width(); x++)
@@ -113,7 +113,71 @@ bool SimulationModel::writeToFiles(QString directory)
             out << m_map.deme(x, y)->toString() << "\n";
         }
     }
-    structureFile.close();
+    file.close();
+
+    // Next structure files
+    i = 2;
+    for (auto generationIt = generations.begin()++; generationIt != generations.end(); generationIt++)
+    {
+        file.setFileName(QString(SELECTOR_STRUCTURE_FILE).arg(i));
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate))
+        {
+            return false;
+        }
+        MapStructureModifier *modification = m_map.modification(*generationIt);
+
+        out << "// K (positive int), r ([0,1]), m ([0,1])\n"
+            << (modification->carryingCapacityMode() == MapStructureModifier::Absolute ? "abs\t" : "rel\t")
+            << (modification->growRateMode() == MapStructureModifier::Absolute ? "abs\t" : "rel\t")
+            << (modification->migrationRateMode() == MapStructureModifier::Absolute ? "abs\n" : "rel\n");
+
+        for (unsigned long y = 0; y < modification->height(); y++)
+        {
+            for (unsigned long x = 0; x < modification->width(); x++)
+            {
+                if (!modification->deme(x, y)->isCarryingCapacityModified())
+                {
+                    out << "-1\t";
+                }
+                else if (modification->carryingCapacityMode() == MapStructureModifier::Absolute)
+                {
+                    out << modification->deme(x, y)->absCarryingCapacity() << "\t";
+                }
+                else
+                {
+                    out << modification->deme(x, y)->relCarryingCapacity() << "\t";
+                }
+
+                if (!modification->deme(x, y)->isGrowthRateModified())
+                {
+                    out << "-1\t";
+                }
+                else if (modification->growRateMode() == MapStructureModifier::Absolute)
+                {
+                    out << modification->deme(x, y)->absGrowthRate() << "\t";
+                }
+                else
+                {
+                    out << modification->deme(x, y)->relGrowthRate() << "\t";
+                }
+
+                if (!modification->deme(x, y)->isMigrationRateModified())
+                {
+                    out << "-1\n";
+                }
+                else if (modification->migrationRateMode() == MapStructureModifier::Absolute)
+                {
+                    out << modification->deme(x, y)->absMigrationRate() << "\n";
+                }
+                else
+                {
+                    out << modification->deme(x, y)->relMigrationRate() << "\n";
+                }
+            }
+        }
+        file.close();
+        i++;
+    }
 
     return true;
 }

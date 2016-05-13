@@ -8,46 +8,69 @@ Map::Map() : Map(1, 1)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 Map::Map(unsigned long width, unsigned long height)
 {
-    m_demes[0] = std::vector<std::vector<Deme> >();
+    if (width == 0)
+    {
+        width = 1;
+    }
+    if (height == 0)
+    {
+        height = 1;
+    }
     setHeight(height);
     setWidth(width);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-std::list<unsigned long> Map::eventList() const
+Map::~Map()
 {
-    std::list<unsigned long> events;
-    for (auto it = m_demes.begin(); it != m_demes.end(); it++)
+    // Delete
+    for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
     {
-        events.push_back(it->first);
-    }
-    return events;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::addEvent(unsigned long generation)
-{
-    // If the event doesn't already exists
-    if (m_demes.count(generation) == 0)
-    {
-        // Add a new deme grid
-        m_demes[generation] = std::vector<std::vector<Deme> >(height(), std::vector<Deme>());
-
-        // Fill the new grid with demes
-        for (unsigned long y = 0; y < height(); y++)
-        {
-            for (unsigned long x = 0; x < width(); x++)
-            {
-                m_demes[generation][y].push_back(Deme(x, y));
-            }
-        }
+        delete it->second;
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::removeEvent(unsigned long generation)
+std::list<unsigned long> Map::modificationGenerations() const
 {
-    m_demes.erase(generation);
+    std::list<unsigned long> generations;
+    for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
+    {
+        generations.push_back(it->first);
+    }
+    generations.sort();
+    return generations;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+MapStructureModifier* Map::modification(unsigned long generation)
+{
+    if (m_modifications.count(generation) == 1)
+    {
+        return m_modifications[generation];
+    }
+    return nullptr;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void Map::addModification(unsigned long generation)
+{
+    // If the modification doesn't already exists
+    if (m_modifications.count(generation) == 0)
+    {
+        // Add a new modification
+        m_modifications[generation] = new MapStructureModifier(generation, width(), height());
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void Map::removeModification(unsigned long generation)
+{
+    if (m_modifications.count(generation) == 1)
+    {
+        delete m_modifications[generation];
+        m_modifications.erase(generation);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -100,30 +123,24 @@ bool Map::deleteRoute(unsigned long fromX, unsigned long fromY, unsigned long to
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned long Map::width()
 {
-    return m_demes[0][0].size();
+    return m_demes[0].size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 unsigned long Map::height()
 {
-    return m_demes[0].size();
+    return m_demes.size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Deme* Map::deme(unsigned long x, unsigned long y, unsigned long generation)
+Deme* Map::deme(unsigned long x, unsigned long y)
 {
     // Check if coordinates are within the map
-    if (x >= width() || y >= height())
+    if (x < width() && y < height())
     {
-        return nullptr;
+        return &(m_demes[y][x]);
     }
-    return &(m_demes[generation][y][x]);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::groupDemography()
-{
-    return m_groupDemography;
+    return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,11 +152,11 @@ std::map<unsigned long, std::vector<Deme*> > Map::groups()
     {
         for (unsigned long x = 0; x < width(); x++)
         {
-            if (results.count(m_demes[0][y][x].group()) == 0)
+            if (results.count(m_demes[y][x].group()) == 0)
             {
-                results[m_demes[0][y][x].group()] = std::vector<Deme*>();
+                results[m_demes[y][x].group()] = std::vector<Deme*>();
             }
-            results[m_demes[0][y][x].group()].push_back(&m_demes[0][y][x]);
+            results[m_demes[y][x].group()].push_back(&m_demes[y][x]);
         }
     }
     return results;
@@ -167,18 +184,20 @@ bool Map::setWidth(unsigned long width)
     {
         for (unsigned long x = width; x < oldWidth; x++)
         {
-            _removeRoutes(&(m_demes[0][y][x]));
+            _removeRoutes(&(m_demes[y][x]));
         }
     }
 
-    // Set the width for each events ...
-    for (auto eventIt = m_demes.begin(); eventIt != m_demes.end(); eventIt++)
+    // Set the width for each row
+    for (unsigned long y = 0; y < height(); y++)
     {
-        // ... on each row
-        for (unsigned long y = 0; y < height(); y++)
-        {
-            _setRowWidth(eventIt->second[y], y, width);
-        }
+        _setRowWidth(m_demes[y], y, width);
+    }
+
+    // Set width of modifications maps
+    for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
+    {
+        it->second->setWidth(width);
     }
     return true;
 }
@@ -205,33 +224,23 @@ bool Map::setHeight(unsigned long height)
     {
         for (unsigned long x = 0; x < width(); x++)
         {
-            _removeRoutes(&(m_demes[0][y][x]));
+            _removeRoutes(&(m_demes[y][x]));
         }
     }
 
-    // Set the height for each events
-    for (auto eventIt = m_demes.begin(); eventIt != m_demes.end(); eventIt++)
-    {
-        eventIt->second.resize(height);
+    m_demes.resize(height);
 
-        // If new rows have been added, set the correct width for them
-        for (unsigned long y = oldHeight; y < height; y++)
-        {
-            _setRowWidth(eventIt->second[y], y, width());
-        }
-    }
-    return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::enableGroupDemography(bool b)
-{
-    if (b && !m_groupDemography)
+    // If new rows have been added, set the correct width for them
+    for (unsigned long y = oldHeight; y < height; y++)
     {
-       // std::map<unsigned long, std::vector<Deme*> > groups = groups();
+        _setRowWidth(m_demes[y], y, width());
     }
 
-    m_groupDemography = b;
+    // Set height of modifications maps
+    for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
+    {
+        it->second->setHeight(height);
+    }
     return true;
 }
 

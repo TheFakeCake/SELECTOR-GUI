@@ -24,6 +24,7 @@ public:
     unsigned long group() const;
     unsigned long sampleSize() const;
 
+    bool enable(bool b);
     bool move(unsigned long x, unsigned long y);
     bool setInitialPopulation(unsigned long population);
     bool setCarryingCapacity(unsigned long capacity);
@@ -34,6 +35,7 @@ public:
 
 protected:
 
+    bool m_enabled;
     unsigned long m_x;
     unsigned long m_y;
     unsigned long m_initialPopulation;

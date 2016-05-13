@@ -17,12 +17,16 @@ SOURCES += main.cpp\
     simulationmodel.cpp \
     deme.cpp \
     map.cpp \
-    selection.cpp
+    selection.cpp \
+    MapStructureModifier.cpp \
+    ModifierDeme.cpp
 
 HEADERS  += mainwindow.h \
     simulationmodel.h \
     deme.h \
     map.h \
-    selection.h
+    selection.h \
+    MapStructureModifier.h \
+    ModifierDeme.h
 
 FORMS    += mainwindow.ui
