@@ -24,17 +24,6 @@ Deme::Deme(unsigned long x, unsigned long y, unsigned long initialPopulation, un
     setSampleSize(sampleSize);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-QString Deme::toString() const
-{
-    return QString("%1 %2 %3 %4 %5 %6").arg(m_initialPopulation)
-                                       .arg(m_enabled ? m_carryingCapacity : -1)
-                                       .arg(m_growRate)
-                                       .arg(m_migrationRate)
-                                       .arg(m_group)
-                                       .arg(m_sampleSize);
-}
-
 ///////////////////////////////////////////// GETTERS //////////////////////////////////////////////
 bool Deme::isEnabled() const
 {

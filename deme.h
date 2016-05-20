@@ -12,8 +12,6 @@ public:
     Deme(unsigned long x, unsigned long y, unsigned long initialPopulation, unsigned long carryingCapacity,
          double growthRate, double migrationRate, unsigned long group, unsigned long sampleSize);
 
-    QString toString() const;
-
     bool isEnabled() const;
     unsigned long x() const;
     unsigned long y() const;

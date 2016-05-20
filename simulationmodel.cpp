@@ -110,7 +110,13 @@ bool SimulationModel::writeToFiles(QString directory)
     {
         for (unsigned long x = 0; x < m_map.width(); x++)
         {
-            out << m_map.deme(x, y)->toString() << "\n";
+            Deme *deme = m_map.deme(x, y);
+            out << QString("%1 %2 %3 %4 %5 %6\n").arg(deme->initialPopulation())
+                                                 .arg(deme->isEnabled() ? deme->carryingCapacity() : -1)
+                                                 .arg(deme->growRate())
+                                                 .arg(deme->migrationRate())
+                                                 .arg(deme->group())
+                                                 .arg(deme->sampleSize());
         }
     }
     file.close();
