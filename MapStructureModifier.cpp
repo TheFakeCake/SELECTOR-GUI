@@ -36,7 +36,7 @@ MapStructureModifier::ModificationMode MapStructureModifier::carryingCapacityMod
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-MapStructureModifier::ModificationMode MapStructureModifier::growRateMode()
+MapStructureModifier::ModificationMode MapStructureModifier::growthRateMode()
 {
     return m_growthRateMode;
 }
@@ -125,7 +125,7 @@ void MapStructureModifier::setCarryingCapacityMode(ModificationMode mode)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapStructureModifier::setGrowRateMode(ModificationMode mode)
+void MapStructureModifier::setGrowthRateMode(ModificationMode mode)
 {
     m_growthRateMode = mode;
 }

@@ -19,7 +19,7 @@ public:
     unsigned long height();
     unsigned long generation();
     ModificationMode carryingCapacityMode();
-    ModificationMode growRateMode();
+    ModificationMode growthRateMode();
     ModificationMode migrationRateMode();
     ModifierDeme* deme(unsigned long x, unsigned long y);
 
@@ -27,7 +27,7 @@ public:
     void setHeight(unsigned long height);
     void setGeneration(unsigned long generation);
     void setCarryingCapacityMode(ModificationMode mode);
-    void setGrowRateMode(ModificationMode mode);
+    void setGrowthRateMode(ModificationMode mode);
     void setMigrationRateMode(ModificationMode mode);
 
 protected:

@@ -18,7 +18,7 @@ Deme::Deme(unsigned long x, unsigned long y, unsigned long initialPopulation, un
     move(x, y);
     setInitialPopulation(initialPopulation);
     setCarryingCapacity(carryingCapacity);
-    setGrowRate(growthRate);
+    setGrowthRate(growthRate);
     setMigrationRate(migrationRate);
     setGroup(group);
     setSampleSize(sampleSize);
@@ -50,9 +50,9 @@ unsigned long Deme::carryingCapacity() const
     return m_carryingCapacity;
 }
 
-double Deme::growRate() const
+double Deme::growthRate() const
 {
-    return m_growRate;
+    return m_growthRate;
 }
 
 double Deme::migrationRate() const
@@ -96,11 +96,11 @@ bool Deme::setCarryingCapacity(unsigned long capacity)
     return true;
 }
 
-bool Deme::setGrowRate(double rate)
+bool Deme::setGrowthRate(double rate)
 {
     if (rate >= 0.0 && rate <= 1.0)
     {
-        m_growRate = rate;
+        m_growthRate = rate;
         return true;
     }
     return false;
