@@ -15,9 +15,6 @@ public:
 
     SimulationModel();
 
-    bool loadFromFiles(QString directory);
-    bool writeToFiles(QString directory);
-
     unsigned long nbSimulations() const;
     unsigned long nbGenerations() const;
     unsigned long initialAllelePoolSize() const;

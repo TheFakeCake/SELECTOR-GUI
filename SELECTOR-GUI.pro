@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     map.cpp \
     selection.cpp \
     MapStructureModifier.cpp \
-    ModifierDeme.cpp
+    ModifierDeme.cpp \
+    SelectorConfigFiles.cpp
 
 HEADERS  += mainwindow.h \
     simulationmodel.h \
@@ -27,7 +28,8 @@ HEADERS  += mainwindow.h \
     map.h \
     selection.h \
     MapStructureModifier.h \
-    ModifierDeme.h
+    ModifierDeme.h \
+    SelectorConfigFiles.h
 
 FORMS    += mainwindow.ui
 
