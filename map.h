@@ -21,6 +21,7 @@ public:
     MapStructureModifier* modification(unsigned long generation);
     void addModification(unsigned long generation);
     void removeModification(unsigned long generation);
+    void removeAllModifications();
 
     const Routes& routes() const;
     bool setRoute(unsigned long fromX, unsigned long fromY, unsigned long toX, unsigned long toY, double factor);

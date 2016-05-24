@@ -74,6 +74,16 @@ void Map::removeModification(unsigned long generation)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+void Map::removeAllModifications()
+{
+    for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
+    {
+        delete it->second;
+    }
+    m_modifications.clear();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 const std::map<Deme*, std::map<Deme*, double> >& Map::routes() const
 {
     return m_routes;
