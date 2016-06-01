@@ -22,7 +22,9 @@ SOURCES += main.cpp\
     models/ModifierDeme.cpp \
     SelectorConfigFiles.cpp \
     gui/MapWidget.cpp \
-    gui/IntervalWidget.cpp
+    gui/IntervalWidget.cpp \
+    gui/DemesParamWidget.cpp \
+    gui/LogWidget.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -33,10 +35,13 @@ HEADERS  += mainwindow.h \
     models/ModifierDeme.h \
     SelectorConfigFiles.h \
     gui/MapWidget.h \
-    gui/IntervalWidget.h
+    gui/IntervalWidget.h \
+    gui/DemesParamWidget.h \
+    gui/LogWidget.h
 
 FORMS    += mainwindow.ui \
-    gui/IntervalWidget.ui
+    gui/IntervalWidget.ui \
+    gui/DemesParamWidget.ui
 
 RESOURCES += \
     icons.qrc

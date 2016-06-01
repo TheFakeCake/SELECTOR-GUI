@@ -5,6 +5,7 @@
 #include "models/simulationmodel.h"
 #include "SelectorConfigFiles.h"
 #include "gui/MapWidget.h"
+#include "gui/DemesParamWidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +33,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     MapWidget *m_mapWidget;
+    DemesParamWidget *m_demesParamWidget;
     SimulationModel m_simulation;
     SelectorConfigFiles m_configFiles;
     bool m_simulationFromConfigFiles;

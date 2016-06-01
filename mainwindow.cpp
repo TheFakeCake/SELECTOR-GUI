@@ -7,9 +7,19 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // Add the map widget
     m_mapWidget = new MapWidget(m_simulation.map());
     connect(ui->displayModeComboBox, SIGNAL(currentIndexChanged(int)), m_mapWidget, SLOT(setDisplayMode(int)));
     ui->centerLayout->addWidget(m_mapWidget);
+
+    // Add the demes parameter widget
+    m_demesParamWidget = new DemesParamWidget(m_simulation.map());
+    QVBoxLayout *demesParamFrameLayout = new QVBoxLayout();
+    demesParamFrameLayout->addWidget(m_demesParamWidget);
+    ui->demesParamFrame->setLayout(demesParamFrameLayout);
+    connect(m_mapWidget, SIGNAL(selectionChanged(QList<QPoint>&)), m_demesParamWidget, SLOT(setDemeSelection(QList<QPoint>&)));
+
     m_simulationFromConfigFiles = false;
 
     // SimulationModel -> View connections
