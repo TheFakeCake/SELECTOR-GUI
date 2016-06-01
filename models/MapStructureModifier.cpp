@@ -1,7 +1,7 @@
 #include "MapStructureModifier.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-MapStructureModifier::MapStructureModifier(unsigned long generation, unsigned long width, unsigned long height)
+MapStructureModifier::MapStructureModifier(int generation, int width, int height)
 {
     m_carryingCapacityMode = Absolute;
     m_growthRateMode = Absolute;
@@ -12,19 +12,19 @@ MapStructureModifier::MapStructureModifier(unsigned long generation, unsigned lo
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned long MapStructureModifier::width()
+int MapStructureModifier::width()
 {
     return m_demes[0].size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned long MapStructureModifier::height()
+int MapStructureModifier::height()
 {
     return m_demes.size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned long MapStructureModifier::generation()
+int MapStructureModifier::generation()
 {
     return m_generation;
 }
@@ -48,7 +48,7 @@ MapStructureModifier::ModificationMode MapStructureModifier::migrationRateMode()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-ModifierDeme* MapStructureModifier::deme(unsigned long x, unsigned long y)
+ModifierDeme* MapStructureModifier::deme(int x, int y)
 {
     if (x < width() && y < height())
     {
@@ -58,7 +58,7 @@ ModifierDeme* MapStructureModifier::deme(unsigned long x, unsigned long y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapStructureModifier::setWidth(unsigned long width)
+void MapStructureModifier::setWidth(int width)
 {
     // Width must be 1 or greater
     if (width < 1)
@@ -67,14 +67,14 @@ void MapStructureModifier::setWidth(unsigned long width)
     }
 
     // Set the width on each row
-    for (unsigned long y = 0; y < height(); y++)
+    for (int y = 0; y < height(); y++)
     {
         _setRowWidth(m_demes[y], y, width);
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapStructureModifier::setHeight(unsigned long height)
+void MapStructureModifier::setHeight(int height)
 {
     // Height must be 1 or greater
     if (height < 1)
@@ -82,30 +82,30 @@ void MapStructureModifier::setHeight(unsigned long height)
         return;
     }
 
-    unsigned long oldHeight = this->height();
+    int oldHeight = this->height();
     m_demes.resize(height);
 
     // If new rows have been added, set the correct width for them
-    for (unsigned long y = oldHeight; y < height; y++)
+    for (int y = oldHeight; y < height; y++)
     {
         _setRowWidth(m_demes[y], y, width());
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapStructureModifier::_setRowWidth(std::vector<ModifierDeme>& row, unsigned long rowY, unsigned long width)
+void MapStructureModifier::_setRowWidth(std::vector<ModifierDeme>& row, int rowY, int width)
 {
     // If the new width is lower, demes are removed
-    if (row.size() > width)
+    if ((int)row.size() > width)
     {
-        for (unsigned long x = row.size(); x > width; x--)
+        for (int x = row.size(); x > width; x--)
         {
             row.pop_back();
         }
     }
     else // Else, demes are added to the row
     {
-        for (unsigned long x = row.size(); x < width; x++)
+        for (int x = row.size(); x < width; x++)
         {
             row.push_back(ModifierDeme(x, rowY));
         }
@@ -113,7 +113,7 @@ void MapStructureModifier::_setRowWidth(std::vector<ModifierDeme>& row, unsigned
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapStructureModifier::setGeneration(unsigned long generation)
+void MapStructureModifier::setGeneration(int generation)
 {
     m_generation = generation;
 }

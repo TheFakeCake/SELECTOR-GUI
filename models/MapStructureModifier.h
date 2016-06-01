@@ -13,28 +13,28 @@ public:
         Relative
     };
 
-    MapStructureModifier(unsigned long generation, unsigned long width, unsigned long height);
+    MapStructureModifier(int generation, int width, int height);
 
-    unsigned long width();
-    unsigned long height();
-    unsigned long generation();
+    int width();
+    int height();
+    int generation();
     ModificationMode carryingCapacityMode();
     ModificationMode growthRateMode();
     ModificationMode migrationRateMode();
-    ModifierDeme* deme(unsigned long x, unsigned long y);
+    ModifierDeme* deme(int x, int y);
 
-    void setWidth(unsigned long width);
-    void setHeight(unsigned long height);
-    void setGeneration(unsigned long generation);
+    void setWidth(int width);
+    void setHeight(int height);
+    void setGeneration(int generation);
     void setCarryingCapacityMode(ModificationMode mode);
     void setGrowthRateMode(ModificationMode mode);
     void setMigrationRateMode(ModificationMode mode);
 
 protected:
 
-    void _setRowWidth(std::vector<ModifierDeme>& row, unsigned long rowY, unsigned long width);
+    void _setRowWidth(std::vector<ModifierDeme>& row, int rowY, int width);
 
-    unsigned long m_generation;
+    int m_generation;
     ModificationMode m_carryingCapacityMode;
     ModificationMode m_growthRateMode;
     ModificationMode m_migrationRateMode;

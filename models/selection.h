@@ -1,11 +1,14 @@
 #ifndef SELECTION_H
 #define SELECTION_H
 
+#include <QObject>
 #include <QString>
 #include <QStringList>
 
-class Selection
+class Selection : public QObject
 {
+    Q_OBJECT
+
 public:
 
     enum Model {
@@ -39,11 +42,21 @@ public:
     double northEastCoefficient() const;
     double southWestCoefficient() const;
 
+public slots:
     void setModel(Model model);
+    void setModel(int model);
     void setHeterogeneity(Heterogeneity heterogeneity);
+    void setHeterogeneity(int heterogeneity);
     void setUniformCoefficient(double coeff);
     void setNorthEastCoefficient(double coeff);
     void setSouthWestCoefficient(double coeff);
+
+signals:
+    void modelChanged(int newModel);
+    void heterogeneityChanged(int newHeterogeneity);
+    void uniformCoefficientChanged(double newCoeff);
+    void northEastCoefficientChanged(double newCoeff);
+    void southWestCoefficientChanged(double newCoeff);
 
 protected:
 

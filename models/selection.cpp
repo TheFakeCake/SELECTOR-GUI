@@ -19,8 +19,13 @@ const QStringList Selection::m_heterogeneityNames = (QStringList()
                                                      << QObject::tr("Longitudinal"));
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Selection::Selection(Model model, Heterogeneity heterogeneity) : m_model(model), m_heterogeneity(heterogeneity),
-    m_uniformCoefficient(0.0), m_northEastCoefficient(0.0), m_southWestCoefficient(0.0)
+Selection::Selection(Model model, Heterogeneity heterogeneity) :
+    QObject(),
+    m_model(model),
+    m_heterogeneity(heterogeneity),
+    m_uniformCoefficient(0.0),
+    m_northEastCoefficient(0.0),
+    m_southWestCoefficient(0.0)
 {
 }
 
@@ -84,34 +89,110 @@ double Selection::southWestCoefficient() const
 ///////////////////////////////////////// SETTERS //////////////////////////////////////////////////
 void Selection::setModel(Model model)
 {
-    m_model = model;
+    setModel((int)model);
+}
+
+void Selection::setModel(int model)
+{
+    if (model != m_model)
+    {
+        if (model < FirstModel)
+        {
+            m_model = FirstModel;
+        }
+        else if (model > LastModel)
+        {
+            m_model = LastModel;
+        }
+        else
+        {
+            m_model = (Model)model;
+        }
+        emit modelChanged(m_model);
+    }
 }
 
 void Selection::setHeterogeneity(Heterogeneity heterogeneity)
 {
-    m_heterogeneity = heterogeneity;
+    setHeterogeneity((int)heterogeneity);
+}
+
+void Selection::setHeterogeneity(int heterogeneity)
+{
+    if (heterogeneity != m_heterogeneity)
+    {
+        if (heterogeneity < FirstHeterogeneity)
+        {
+            m_heterogeneity = FirstHeterogeneity;
+        }
+        else if (heterogeneity > LastHeterogeneity)
+        {
+            m_heterogeneity = LastHeterogeneity;
+        }
+        else
+        {
+            m_heterogeneity = (Heterogeneity)heterogeneity;
+        }
+        emit heterogeneityChanged(m_heterogeneity);
+    }
 }
 
 void Selection::setUniformCoefficient(double coeff)
 {
-    if (coeff >= 0.0 && coeff <= 1.0)
+    if (coeff != m_uniformCoefficient)
     {
-        m_uniformCoefficient = coeff;
+        if (coeff < 0.0)
+        {
+            m_uniformCoefficient = 0.0;
+        }
+        else if (coeff > 1.0)
+        {
+            m_uniformCoefficient = 1.0;
+        }
+        else
+        {
+            m_uniformCoefficient = coeff;
+        }
+        emit uniformCoefficientChanged(m_uniformCoefficient);
     }
 }
 
 void Selection::setNorthEastCoefficient(double coeff)
 {
-    if (coeff >= 0.0 && coeff <= 1.0)
+    if (coeff != m_northEastCoefficient)
     {
-        m_northEastCoefficient = coeff;
+        if (coeff < 0.0)
+        {
+            m_northEastCoefficient = 0.0;
+        }
+        else if (coeff > 1.0)
+        {
+            m_northEastCoefficient = 1.0;
+        }
+        else
+        {
+            m_northEastCoefficient = coeff;
+        }
+        emit northEastCoefficientChanged(m_northEastCoefficient);
     }
 }
 
 void Selection::setSouthWestCoefficient(double coeff)
 {
-    if (coeff >= 0.0 && coeff <= 1.0)
+    if (coeff != m_southWestCoefficient)
     {
-        m_southWestCoefficient = coeff;
+        if (coeff < 0.0)
+        {
+            m_southWestCoefficient = 0.0;
+        }
+        else if (coeff > 1.0)
+        {
+            m_southWestCoefficient = 1.0;
+        }
+        else
+        {
+            m_southWestCoefficient = coeff;
+        }
+        emit southWestCoefficientChanged(m_southWestCoefficient);
     }
 }

@@ -14,24 +14,29 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    simulationmodel.cpp \
-    deme.cpp \
-    map.cpp \
-    selection.cpp \
-    MapStructureModifier.cpp \
-    ModifierDeme.cpp \
-    SelectorConfigFiles.cpp
+    models/simulationmodel.cpp \
+    models/deme.cpp \
+    models/map.cpp \
+    models/selection.cpp \
+    models/MapStructureModifier.cpp \
+    models/ModifierDeme.cpp \
+    SelectorConfigFiles.cpp \
+    gui/MapWidget.cpp \
+    gui/IntervalWidget.cpp
 
 HEADERS  += mainwindow.h \
-    simulationmodel.h \
-    deme.h \
-    map.h \
-    selection.h \
-    MapStructureModifier.h \
-    ModifierDeme.h \
-    SelectorConfigFiles.h
+    models/simulationmodel.h \
+    models/deme.h \
+    models/map.h \
+    models/selection.h \
+    models/MapStructureModifier.h \
+    models/ModifierDeme.h \
+    SelectorConfigFiles.h \
+    gui/MapWidget.h \
+    gui/IntervalWidget.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    gui/IntervalWidget.ui
 
 RESOURCES += \
     icons.qrc

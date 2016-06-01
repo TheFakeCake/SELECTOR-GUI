@@ -6,7 +6,7 @@ Map::Map() : Map(1, 1)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Map::Map(unsigned long width, unsigned long height)
+Map::Map(int width, int height) : QObject()
 {
     if (width == 0)
     {
@@ -31,9 +31,9 @@ Map::~Map()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-std::list<unsigned long> Map::modificationGenerations() const
+std::list<int> Map::modificationGenerations() const
 {
-    std::list<unsigned long> generations;
+    std::list<int> generations;
     for (auto it = m_modifications.begin(); it != m_modifications.end(); it++)
     {
         generations.push_back(it->first);
@@ -43,7 +43,7 @@ std::list<unsigned long> Map::modificationGenerations() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-MapStructureModifier* Map::modification(unsigned long generation)
+MapStructureModifier* Map::modification(int generation)
 {
     if (m_modifications.count(generation) == 1)
     {
@@ -53,7 +53,7 @@ MapStructureModifier* Map::modification(unsigned long generation)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::addModification(unsigned long generation)
+void Map::addModification(int generation)
 {
     // If the modification doesn't already exists
     if (m_modifications.count(generation) == 0)
@@ -64,7 +64,7 @@ void Map::addModification(unsigned long generation)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::removeModification(unsigned long generation)
+void Map::removeModification(int generation)
 {
     if (m_modifications.count(generation) == 1)
     {
@@ -90,12 +90,12 @@ const std::map<Deme*, std::map<Deme*, double> >& Map::routes() const
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::setRoute(unsigned long fromX, unsigned long fromY, unsigned long toX, unsigned long toY, double factor)
+bool Map::setRoute(int fromX, int fromY, int toX, int toY, double factor)
 {
     Deme *fromDeme = deme(fromX, fromY);
     Deme *toDeme = deme(toX, toY);
-    unsigned long absXDiff = abs((long)toX - (long)fromX);
-    unsigned long absYDiff = abs((long)toY - (long)fromY);
+    int absXDiff = abs(toX - fromX);
+    int absYDiff = abs(toY - fromY);
 
     // Check if route goes between two adjacent demes
     if (fromDeme == nullptr || toDeme == nullptr || fromDeme == toDeme ||
@@ -109,7 +109,7 @@ bool Map::setRoute(unsigned long fromX, unsigned long fromY, unsigned long toX, 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::deleteRoute(unsigned long fromX, unsigned long fromY, unsigned long toX, unsigned long toY)
+bool Map::deleteRoute(int fromX, int fromY, int toX, int toY)
 {
     Deme *fromDeme = deme(fromX, fromY);
     Deme *toDeme = deme(toX, toY);
@@ -131,75 +131,172 @@ bool Map::deleteRoute(unsigned long fromX, unsigned long fromY, unsigned long to
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned long Map::width()
+int Map::width() const
 {
     return m_demes[0].size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-unsigned long Map::height()
+int Map::height() const
 {
     return m_demes.size();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Deme* Map::deme(unsigned long x, unsigned long y)
+Deme* Map::deme(int x, int y)
 {
     // Check if coordinates are within the map
     if (x < width() && y < height())
     {
-        return &(m_demes[y][x]);
+        return m_demes[y][x];
     }
     return nullptr;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-std::map<unsigned long, std::vector<Deme*> > Map::groups()
+std::map<int, std::vector<Deme*> > Map::groups()
 {
-    std::map<unsigned long, std::vector<Deme*> > results;
+    std::map<int, std::vector<Deme*> > results;
 
-    for (unsigned long y = 0; y < height(); y++)
+    for (int y = 0; y < height(); y++)
     {
-        for (unsigned long x = 0; x < width(); x++)
+        for (int x = 0; x < width(); x++)
         {
-            if (results.count(m_demes[y][x].group()) == 0)
+            // If the group of the deme isn't already registered, create its entry
+            if (results.count(m_demes[y][x]->group()) == 0)
             {
-                results[m_demes[y][x].group()] = std::vector<Deme*>();
+                results[m_demes[y][x]->group()] = std::vector<Deme*>();
             }
-            results[m_demes[y][x].group()].push_back(&m_demes[y][x]);
+            results[m_demes[y][x]->group()].push_back(m_demes[y][x]);
         }
     }
     return results;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::setWidth(unsigned long width)
+int Map::maxInitialPopulation() const
+{
+    int max = 0;
+    for (int y = 0; y < height(); y++)
+    {
+        for (int x = 0; x < width(); x++)
+        {
+            Deme *deme = m_demes[y][x];
+            if (deme->isEnabled() && deme->initialPopulation() > max)
+            {
+                max = deme->initialPopulation();
+            }
+        }
+    }
+    return max;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+int Map::maxCarryingCapacity() const
+{
+    int max = 0;
+    for (int y = 0; y < height(); y++)
+    {
+        for (int x = 0; x < width(); x++)
+        {
+            Deme *deme = m_demes[y][x];
+            if (deme->isEnabled() && deme->carryingCapacity() > max)
+            {
+                max = deme->carryingCapacity();
+            }
+        }
+    }
+    return max;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+double Map::maxGrowthRate() const
+{
+    double max = 0.0;
+    for (int y = 0; y < height(); y++)
+    {
+        for (int x = 0; x < width(); x++)
+        {
+            Deme *deme = m_demes[y][x];
+            if (deme->isEnabled() && deme->growthRate() > max)
+            {
+                max = deme->growthRate();
+            }
+        }
+    }
+    return max;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+double Map::maxMigrationRate() const
+{
+    double max = 0.0;
+    for (int y = 0; y < height(); y++)
+    {
+        for (int x = 0; x < width(); x++)
+        {
+            Deme *deme = m_demes[y][x];
+            if (deme->isEnabled() && deme->migrationRate() > max)
+            {
+                max = deme->migrationRate();
+            }
+        }
+    }
+    return max;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+int Map::maxSampleSize() const
+{
+    int max = 0;
+    for (int y = 0; y < height(); y++)
+    {
+        for (int x = 0; x < width(); x++)
+        {
+            Deme *deme = m_demes[y][x];
+            if (deme->isEnabled() && deme->sampleSize() > max)
+            {
+                max = deme->sampleSize();
+            }
+        }
+    }
+    return max;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void Map::dispatchDemeChange(Deme *changedDeme)
+{
+    emit changed();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void Map::setWidth(int width)
 {
     // Width must be 1 or greater
     if (width < 1)
     {
-        return false;
+        return;
     }
 
-    unsigned long oldWidth = this->width();
+    int oldWidth = this->width();
 
     // Check if the width really needs to be modified
     if (oldWidth == width)
     {
-        return true;
+        return;
     }
 
     // Remove the routes including by the removed demes
-    for (unsigned long y = 0; y < height(); y++)
+    for (int y = 0; y < height(); y++)
     {
-        for (unsigned long x = width; x < oldWidth; x++)
+        for (int x = width; x < oldWidth; x++)
         {
-            _removeRoutes(&(m_demes[y][x]));
+            _removeRoutes(m_demes[y][x]);
         }
     }
 
     // Set the width for each row
-    for (unsigned long y = 0; y < height(); y++)
+    for (int y = 0; y < height(); y++)
     {
         _setRowWidth(m_demes[y], y, width);
     }
@@ -209,39 +306,42 @@ bool Map::setWidth(unsigned long width)
     {
         it->second->setWidth(width);
     }
-    return true;
+
+    emit changed();
+    emit widthChanged(this->width());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::setHeight(unsigned long height)
+void Map::setHeight(int height)
 {
     // Height must be 1 or greater
     if (height < 1)
     {
-        return false;
+        return;
     }
 
-    unsigned long oldHeight = this->height();
+    int oldHeight = this->height();
 
     // Check if the height really needs to be modified
     if (height == oldHeight)
     {
-        return true;
+        return;
     }
 
-    // Remove the routes including removed demes
-    for (unsigned long y = height; y < oldHeight; y++)
+    // Remove the routes including removed demes and delete de demes
+    for (int y = height; y < oldHeight; y++)
     {
-        for (unsigned long x = 0; x < width(); x++)
+        for (int x = 0; x < width(); x++)
         {
-            _removeRoutes(&(m_demes[y][x]));
+            _removeRoutes(m_demes[y][x]);
+            m_demes[y][x]->deleteLater();
         }
     }
 
     m_demes.resize(height);
 
     // If new rows have been added, set the correct width for them
-    for (unsigned long y = oldHeight; y < height; y++)
+    for (int y = oldHeight; y < height; y++)
     {
         _setRowWidth(m_demes[y], y, width());
     }
@@ -251,23 +351,30 @@ bool Map::setHeight(unsigned long height)
     {
         it->second->setHeight(height);
     }
-    return true;
+
+    emit changed();
+    emit heightChanged(this->height());
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::_setRowWidth(std::vector<Deme>& row, unsigned long rowY, unsigned long width)
+void Map::_setRowWidth(std::vector<Deme*>& row, int rowY, int width)
 {
-    // If the new width is lower, demes are removed
-    if (row.size() > width)
+    // If the new width is lower, demes are deleted
+    if (width < (int)row.size())
     {
+        for (int x = width; x < (int)row.size(); x++)
+        {
+            m_demes[rowY][x]->deleteLater();
+        }
         row.resize(width);
     }
     else
     {
         // Else, demes are added to the row
-        for (unsigned long x = row.size(); x < width; x++)
+        for (int x = row.size(); x < width; x++)
         {
-            row.push_back(Deme(x, rowY));
+            Deme *newDeme = new Deme(this, x, rowY);
+            row.push_back(newDeme);
         }
     }
 }

@@ -15,7 +15,7 @@ const QString FLOAT     = QString("(?:[0-9]+(?:\\.[0-9]+)?)");
 const QString ROUTE     = QString("(?:\\(("+INT+"),("+INT+"),("+FLOAT+")\\))");
 const QString LINE_END  = SPACE+"*"+COMMENT+"?";
 
-const unsigned long SELECTOR_PARAM_NB_LINES = 25;
+const int SELECTOR_PARAM_NB_LINES = 25;
 const QString SELECTOR_PARAM_REGEX[] = {
 /*01*/  LINE_END,
 /*02*/  "("+INT+")"+LINE_END,
@@ -48,7 +48,7 @@ const QString SELECTOR_PARAM_REGEX[] = {
 const QString SELECTOR_STRUCTURE_1_REGEX[] {
 /*01*/  LINE_END,
 /*02*/  LINE_END,
-/*03+*/ "("+INT+")"+SPACE+"+("+INT+")"+SPACE+"+("+FLOAT+")"+SPACE+"+("+FLOAT+")"+SPACE+"+("+INT+")"+SPACE+"+("+INT+")"+LINE_END
+/*03+*/ "("+INT+")"+SPACE+"+("+INT+"|-1)"+SPACE+"+("+FLOAT+")"+SPACE+"+("+FLOAT+")"+SPACE+"+("+INT+")"+SPACE+"+("+INT+")"+LINE_END
 };
 
 const QString SELECTOR_STRUCTURE_N_REGEX[] {
@@ -83,11 +83,11 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
     QTextStream in(&file);
     QRegExp regex;
     bool groupedDemes;
-    long nbRoutes;
-    long nbStructures;
+    int nbRoutes;
+    int nbStructures;
 
     // Read the first 25 lines of selector_param.txt
-    for (unsigned long i = 0; i < SELECTOR_PARAM_NB_LINES; i++)
+    for (int i = 0; i < SELECTOR_PARAM_NB_LINES; i++)
     {
         // Check if end of files is prematurely reached
         if (in.atEnd())
@@ -111,7 +111,7 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
     // Read the last lines of selector_param.txt (map structure modifications)
     sim->map()->removeAllModifications();
     regex.setPattern(SELECTOR_PARAM_REGEX[SELECTOR_PARAM_NB_LINES]);
-    for (long i = 0; i < nbStructures - 1; i++)
+    for (int i = 0; i < nbStructures - 1; i++)
     {
         // Check if end of files is prematurely reached
         if (in.atEnd())
@@ -121,7 +121,7 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         }
         if (regex.exactMatch(in.readLine().trimmed()))
         {
-            sim->map()->addModification(regex.cap(2).toLong());
+            sim->map()->addModification(regex.cap(2).toInt());
         }
         else
         {
@@ -144,9 +144,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
     regex.setPattern(SELECTOR_STRUCTURE_1_REGEX[2]);
 
     // For each deme of the map ...
-    for (unsigned long y = 0; y < sim->map()->height(); y++)
+    for (int y = 0; y < sim->map()->height(); y++)
     {
-        for (unsigned long x = 0; x < sim->map()->width(); x++)
+        for (int x = 0; x < sim->map()->width(); x++)
         {
             // Check if end of files is prematurely reached
             if (in.atEnd())
@@ -160,12 +160,19 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
             if (regex.exactMatch(in.readLine().trimmed()))
             {
                 // Set deme parameters
-                sim->map()->deme(x, y)->setInitialPopulation(regex.cap(1).toLong());
-                sim->map()->deme(x, y)->setCarryingCapacity(regex.cap(2).toLong());
+                sim->map()->deme(x, y)->setInitialPopulation(regex.cap(1).toInt());
+                if (regex.cap(2).toInt() == -1)
+                {
+                    sim->map()->deme(x, y)->enable(false);
+                }
+                else
+                {
+                    sim->map()->deme(x, y)->setCarryingCapacity(regex.cap(2).toInt());
+                }
                 sim->map()->deme(x, y)->setGrowthRate(regex.cap(3).toDouble());
                 sim->map()->deme(x, y)->setMigrationRate(regex.cap(4).toDouble());
-                sim->map()->deme(x, y)->setGroup(regex.cap(5).toLong());
-                sim->map()->deme(x, y)->setSampleSize(regex.cap(6).toLong());
+                sim->map()->deme(x, y)->setGroup(regex.cap(5).toInt());
+                sim->map()->deme(x, y)->setSampleSize(regex.cap(6).toInt());
             }
             else
             {
@@ -197,7 +204,7 @@ void SelectorConfigFiles::_readAllDemesFiles(SimulationModel *sim)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
 {
-    std::list<unsigned long> modificationGenerations = sim->map()->modificationGenerations();
+    std::list<int> modificationGenerations = sim->map()->modificationGenerations();
     MapStructureModifier *modif;
     QFile file;
     QTextStream in(&file);
@@ -267,9 +274,9 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
         regex.setPattern(dataRegex);
 
         // Read data lines
-        for (unsigned long y = 0; y < modif->height(); y++)
+        for (int y = 0; y < modif->height(); y++)
         {
-            for (unsigned long x = 0; x < modif->width(); x++)
+            for (int x = 0; x < modif->width(); x++)
             {
                 if (! regex.exactMatch(in.readLine().trimmed()))
                 {
@@ -285,7 +292,7 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
                     }
                     else
                     {
-                        modif->deme(x, y)->setAbsCarryingCapacity(regex.cap(1).toLong());
+                        modif->deme(x, y)->setAbsCarryingCapacity(regex.cap(1).toInt());
                     }
                 }
                 if (regex.cap(2) != "-1")
@@ -365,7 +372,7 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
         << sim->map()->height() << "\t// Number of demes along the Y axis\n";
 
     // Groups
-    std::map<unsigned long, std::vector<Deme*> > groups = sim->map()->groups();
+    std::map<int, std::vector<Deme*> > groups = sim->map()->groups();
     out << groups.size() << "\t// Number of population groups\n"
         << "0\t// All demes within a group have the same demography. 0: No | 1: Yes\n";
 
@@ -388,7 +395,7 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
         << routesLine << "\n";
 
     // Poulation structures
-    std::list<unsigned long> generations = sim->map()->modificationGenerations();
+    std::list<int> generations = sim->map()->modificationGenerations();
     out << generations.size() + 1 << "\t// Number of different population structures to load\n"
         << "1\t0\n";
     i = 2;
@@ -407,9 +414,9 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
     }
     out << "// Population characteristics\n"
         << "// Initial size (positive int), Carrying capacity K (positive int), growth rate r ([0,1]),migration rate m ([0,1]), group of demes, sample size\n";
-    for (unsigned long y = 0; y < sim->map()->height(); y++)
+    for (int y = 0; y < sim->map()->height(); y++)
     {
-        for (unsigned long x = 0; x < sim->map()->width(); x++)
+        for (int x = 0; x < sim->map()->width(); x++)
         {
             Deme *deme = sim->map()->deme(x, y);
             out << QString("%1\t%2\t%3\t%4\t%5\t%6\n").arg(deme->initialPopulation())
@@ -439,9 +446,9 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
             << (modification->growthRateMode() == MapStructureModifier::Absolute ? "abs\t" : "rel\t")
             << (modification->migrationRateMode() == MapStructureModifier::Absolute ? "abs\n" : "rel\n");
 
-        for (unsigned long y = 0; y < modification->height(); y++)
+        for (int y = 0; y < modification->height(); y++)
         {
-            for (unsigned long x = 0; x < modification->width(); x++)
+            for (int x = 0; x < modification->width(); x++)
             {
                 if (!modification->deme(x, y)->isCarryingCapacityModified())
                 {
@@ -495,8 +502,8 @@ void SelectorConfigFiles::setDirectory(QString directory)       { m_directory = 
 const QStringList& SelectorConfigFiles::errorMessages() const   { return m_errorMessages; }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, unsigned long line, QRegExp *regex,
-                                           bool &groupedDemes, long &nbRoutes, long &nbStructures)
+void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, int line, QRegExp *regex,
+                                           bool &groupedDemes, int &nbRoutes, int &nbStructures)
 {
     QRegExp routeRegex(ROUTE);
     int pos = 0;
@@ -504,16 +511,16 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, unsigned long l
     switch (line)
     {
     case 0: break;
-    case 1: sim->setNbSimulations(regex->cap(1).toLong()); break;
-    case 2: sim->setNbGenerations(regex->cap(1).toLong()); break;
+    case 1: sim->setNbSimulations(regex->cap(1).toInt()); break;
+    case 2: sim->setNbGenerations(regex->cap(1).toInt()); break;
     case 3: break;
-    case 4: sim->setInitialAllelePoolSize(regex->cap(1).toLong()); break;
-    case 5: sim->setUniqueAllelePool(! regex->cap(1).toLong()); break;
-    case 6: sim->setFirstAlleleFrequency(regex->cap(1).toLong()); break;
+    case 4: sim->setInitialAllelePoolSize(regex->cap(1).toInt()); break;
+    case 5: sim->setUniqueAllelePool(! regex->cap(1).toInt()); break;
+    case 6: sim->setFirstAlleleFrequency(regex->cap(1).toInt()); break;
     case 7: sim->setMutationRate(regex->cap(1).toDouble()); break;
     case 8: break;
     case 9:
-        switch (regex->cap(1).toLong())
+        switch (regex->cap(1).toInt())
         {
         case 2: sim->selection()->setModel(Selection::FDS); break;
         case 3: sim->selection()->setModel(Selection::DPS); break;
@@ -521,29 +528,29 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, unsigned long l
         }
         break;
     case 10:
-        switch (regex->cap(1).toLong())
+        switch (regex->cap(1).toInt())
         {
         case 1: sim->selection()->setHeterogeneity(Selection::Latitudinal); break;
         case 2: sim->selection()->setHeterogeneity(Selection::Longitudinal); break;
         default: sim->selection()->setHeterogeneity(Selection::Uniform); break;
         }
         break;
-    case 11: sim->selection()->setUniformCoefficient(regex->cap(1).toLong()); break;
+    case 11: sim->selection()->setUniformCoefficient(regex->cap(1).toInt()); break;
     case 12: sim->selection()->setNorthEastCoefficient(regex->cap(1).toDouble()); break;
     case 13: sim->selection()->setSouthWestCoefficient(regex->cap(1).toDouble()); break;
     case 14: break;
-    case 15: sim->setOutputCompleteHistory(regex->cap(1).toLong()); break;
+    case 15: sim->setOutputCompleteHistory(regex->cap(1).toInt()); break;
     case 16: break;
-    case 17: sim->map()->setWidth(regex->cap(1).toLong()); break;
-    case 18: sim->map()->setHeight(regex->cap(1).toLong()); break;
+    case 17: sim->map()->setWidth(regex->cap(1).toInt()); break;
+    case 18: sim->map()->setHeight(regex->cap(1).toInt()); break;
     case 19: break;
-    case 20: groupedDemes = regex->cap(1).toLong(); break;
-    case 21: nbRoutes = regex->cap(1).toLong(); break;
+    case 20: groupedDemes = regex->cap(1).toInt(); break;
+    case 21: nbRoutes = regex->cap(1).toInt(); break;
     case 22:
         while ((pos = routeRegex.indexIn(regex->cap(0), pos)) != -1 && nbRoutes > 0)
         {
-            long fromDemeIndex = routeRegex.cap(1).toLong();
-            long toDemeIndex = routeRegex.cap(2).toLong();
+            int fromDemeIndex = routeRegex.cap(1).toInt();
+            int toDemeIndex = routeRegex.cap(2).toInt();
             double factor = routeRegex.cap(3).toDouble();
             sim->map()->setRoute(fromDemeIndex % sim->map()->width(), fromDemeIndex / sim->map()->width(),
                                  toDemeIndex % sim->map()->width(), toDemeIndex / sim->map()->width(),
@@ -557,7 +564,7 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, unsigned long l
                                .arg(line + 1).arg(SELECTOR_PARAM_FILE);
         }
         break;
-    case 23: nbStructures = regex->cap(1).toLong(); break;
+    case 23: nbStructures = regex->cap(1).toInt(); break;
     case 24: break;
     default: break;
     }

@@ -2,7 +2,7 @@
 #define SELECTORCONFIGFILES_H
 
 #include <QString>
-#include "simulationmodel.h"
+#include "models/simulationmodel.h"
 
 class SelectorConfigFiles
 {
@@ -25,8 +25,8 @@ private:
     static const QString SELECTOR_STRUCTURE_FILE;
     static const QString SELECTOR_ALLDEMES_FILE;
 
-    void _handleParamLine(SimulationModel *sim, unsigned long line, QRegExp *regex,
-                          bool &groupedDemes, long &nbRoutes, long &nbStructures);
+    void _handleParamLine(SimulationModel *sim, int line, QRegExp *regex,
+                          bool &groupedDemes, int &nbRoutes, int &nbStructures);
     void _readAllDemesFiles(SimulationModel *sim);
     void _readStructureFiles(SimulationModel *sim);
 
