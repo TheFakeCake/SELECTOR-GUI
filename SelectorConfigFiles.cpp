@@ -61,7 +61,7 @@ SelectorConfigFiles::SelectorConfigFiles() : SelectorConfigFiles(".")
 {
 }
 
-SelectorConfigFiles::SelectorConfigFiles(QString directory)
+SelectorConfigFiles::SelectorConfigFiles(QString directory) : QObject()
 {
     setDirectory(directory);
 }
@@ -69,6 +69,7 @@ SelectorConfigFiles::SelectorConfigFiles(QString directory)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool SelectorConfigFiles::read(SimulationModel *sim)
 {
+    emit info(QString("Reading SELECTOR configuration from directory %1").arg(m_directory));
     m_errorMessages.clear();
 
     // Open selector_param.txt file
@@ -76,7 +77,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        m_errorMessages << QString("Failed to open %1").arg(file.fileName());
+        QString msg = QString("Failed to open %1").arg(file.fileName());
+        m_errorMessages << msg;
+        emit error(msg);
         return false;
     }
 
@@ -92,7 +95,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         // Check if end of files is prematurely reached
         if (in.atEnd())
         {
-            m_errorMessages << QString("Reached the end of file %1. Incomplete configuration.").arg(SELECTOR_PARAM_FILE);
+            QString msg = QString("Reached the end of file %1. Incomplete configuration.").arg(SELECTOR_PARAM_FILE);
+            m_errorMessages << msg;
+            emit warning(msg);
             break;
         }
 
@@ -104,7 +109,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         }
         else
         {
-            m_errorMessages << QString("Error on line %1 of file %2.").arg(i+1).arg(SELECTOR_PARAM_FILE);
+            QString msg = QString("Error on line %1 of file %2. Line ignored.").arg(i+1).arg(SELECTOR_PARAM_FILE);
+            m_errorMessages << msg;
+            emit warning(msg);
         }
     }
 
@@ -116,7 +123,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         // Check if end of files is prematurely reached
         if (in.atEnd())
         {
-            m_errorMessages << QString("Reached the end of file %1. Missing structure files.").arg(SELECTOR_PARAM_FILE);
+            QString msg = QString("Reached the end of file %1. Missing structure files.").arg(SELECTOR_PARAM_FILE);
+            m_errorMessages << msg;
+            emit warning(msg);
             break;
         }
         if (regex.exactMatch(in.readLine().trimmed()))
@@ -125,7 +134,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         }
         else
         {
-            m_errorMessages << QString("Error on line %1 of file %2").arg(SELECTOR_PARAM_NB_LINES + i).arg(SELECTOR_PARAM_FILE);
+            QString msg = QString("Error on line %1 of file %2. Line ignored.").arg(SELECTOR_PARAM_NB_LINES + i).arg(SELECTOR_PARAM_FILE);
+            m_errorMessages << msg;
+            emit warning(msg);
         }
     }
 
@@ -133,7 +144,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
     file.setFileName(m_directory + "/" + QString(SELECTOR_STRUCTURE_FILE).arg(1));
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
     {
-        m_errorMessages.append("Failed to open " + file.fileName());
+        QString msg = QString("Failed to open %1").arg(file.fileName());
+        m_errorMessages << msg;
+        emit error(msg);
         return false;
     }
 
@@ -151,8 +164,10 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
             // Check if end of files is prematurely reached
             if (in.atEnd())
             {
-                m_errorMessages << QString("Reached the end of file %1. Incomplete map data.")
-                                   .arg(QString(SELECTOR_STRUCTURE_FILE).arg(1));
+                QString msg = QString("Reached the end of file %1. Incomplete map data.")
+                                     .arg(QString(SELECTOR_STRUCTURE_FILE).arg(1));
+                m_errorMessages << msg;
+                emit warning(msg);
                 y = sim->map()->height();
                 break;
             }
@@ -176,8 +191,10 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
             }
             else
             {
-                m_errorMessages << QString("Error on line %1 of file %2.").arg(3 + x + y * sim->map()->width())
-                                                                          .arg(QString(SELECTOR_STRUCTURE_FILE).arg(1));
+                QString msg = QString("Error on line %1 of file %2. Line ignored.").arg(3 + x + y * sim->map()->width())
+                                     .arg(QString(SELECTOR_STRUCTURE_FILE).arg(1));
+                m_errorMessages << msg;
+                emit warning(msg);
             }
         }
     }
@@ -192,7 +209,14 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         _readStructureFiles(sim);
     }
 
-    return m_errorMessages.empty();
+    if (! m_errorMessages.empty())
+    {
+        emit warning("End of SELECTOR configuration parsing. Some errors occured.");
+        return false;
+    }
+
+    emit info("SELECTOR configuration successfuly read.");
+    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -217,7 +241,9 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
         file.setFileName(m_directory + "/" + QString(SELECTOR_STRUCTURE_FILE).arg(i));
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
-            m_errorMessages << QString("Failed to open %1.").arg(file.fileName());
+            QString msg = QString("Failed to open %1.").arg(file.fileName());
+            m_errorMessages << msg;
+            emit error(msg);
             return;
         }
 
@@ -230,7 +256,9 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
         regex.setPattern(SELECTOR_STRUCTURE_N_REGEX[1]);
         if (!regex.exactMatch(in.readLine().trimmed()))
         {
-            m_errorMessages << QString("Error on line 2 of file %1.").arg(QString(SELECTOR_STRUCTURE_FILE).arg(i));
+            QString msg = QString("Error on line 2 of file %1. Line ignored.").arg(QString(SELECTOR_STRUCTURE_FILE).arg(i));
+            m_errorMessages << msg;
+            emit warning(msg);
             file.close();
             continue;
         }
@@ -280,8 +308,10 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
             {
                 if (! regex.exactMatch(in.readLine().trimmed()))
                 {
-                    m_errorMessages << QString("Error on line %1 of file %2.").arg(2 + x + y * modif->width())
-                                                                              .arg(QString(SELECTOR_STRUCTURE_FILE).arg(i));
+                    QString msg = QString("Error on line %1 of file %2. Line ignored").arg(2 + x + y * modif->width())
+                                         .arg(QString(SELECTOR_STRUCTURE_FILE).arg(i));
+                    m_errorMessages << msg;
+                    emit warning(msg);
                     continue;
                 }
                 if (regex.cap(1) != "-1")
@@ -327,6 +357,7 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 bool SelectorConfigFiles::write(SimulationModel *sim)
 {
+    emit info(QString("Writing SELECTOR configuration to directory %1").arg(m_directory));
     m_errorMessages.clear();
 
     int i;

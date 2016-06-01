@@ -11,6 +11,8 @@ public:
 
     enum MessageType { Info, Warning, Error };
 
+    static const QString COLORS[];
+
     LogWidget(QWidget *parent = nullptr);
 
 public slots:

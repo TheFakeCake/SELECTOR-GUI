@@ -1,11 +1,14 @@
 #ifndef SELECTORCONFIGFILES_H
 #define SELECTORCONFIGFILES_H
 
+#include <QObject>
 #include <QString>
 #include "models/simulationmodel.h"
 
-class SelectorConfigFiles
+class SelectorConfigFiles : public QObject
 {
+    Q_OBJECT
+
 public:
 
     SelectorConfigFiles();
@@ -18,6 +21,12 @@ public:
     void setDirectory(QString directory);
 
     const QStringList& errorMessages() const;
+
+signals:
+
+    void info(const QString & msg);
+    void warning(const QString & msg);
+    void error(const QString & msg);
 
 private:
 

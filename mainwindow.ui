@@ -678,7 +678,7 @@
        </layout>
       </item>
       <item>
-       <widget class="LogWidget" name="plainTextEdit">
+       <widget class="LogWidget" name="logWidget">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
           <horstretch>0</horstretch>

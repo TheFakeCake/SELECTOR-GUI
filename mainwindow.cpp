@@ -20,7 +20,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->demesParamFrame->setLayout(demesParamFrameLayout);
     connect(m_mapWidget, SIGNAL(selectionChanged(QList<QPoint>&)), m_demesParamWidget, SLOT(setDemeSelection(QList<QPoint>&)));
 
+    // Config files
     m_simulationFromConfigFiles = false;
+    connect(&m_configFiles, SIGNAL(info(QString)), ui->logWidget, SLOT(logInfo(QString)));
+    connect(&m_configFiles, SIGNAL(warning(QString)), ui->logWidget, SLOT(logWarning(QString)));
+    connect(&m_configFiles, SIGNAL(error(QString)), ui->logWidget, SLOT(logError(QString)));
 
     // SimulationModel -> View connections
     connect(&m_simulation, SIGNAL(nbSimulationsChanged(int)), ui->numberOfSimulationsSpinBox, SLOT(setValue(int)));
@@ -95,7 +99,6 @@ void MainWindow::updateView()
     // Map
     ui->mapWidthSpinBox->setValue(m_simulation.map()->width());
     ui->mapHeightSpinBox->setValue(m_simulation.map()->height());
-    //m_mapGridWidget->update();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,11 +115,14 @@ void MainWindow::on_action_OpenSimulation_triggered()
 
     if (! m_configFiles.read(&m_simulation))
     {
-        QMessageBox::warning(this, tr("Error while loading configuration"),
-                             tr("Something happened while loading the simulation configuration :\n\n") + m_configFiles.errorMessages().join('\n'));
+        QMessageBox::warning(this, tr("SELECTOR-GUI"),
+                             tr("Some errors happened. See the log for more details."));
+        m_simulationFromConfigFiles = false;
     }
-
-    m_simulationFromConfigFiles = true;
+    else
+    {
+        m_simulationFromConfigFiles = true;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

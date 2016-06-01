@@ -1,5 +1,11 @@
 #include "LogWidget.h"
 
+const QString LogWidget::COLORS[] = {
+    QString("#0033cc"),
+    QString("#cc9900"),
+    QString("#cc0000")
+};
+
 LogWidget::LogWidget(QWidget *parent) :
     QPlainTextEdit(parent)
 {
@@ -8,7 +14,11 @@ LogWidget::LogWidget(QWidget *parent) :
 
 void LogWidget::log(const QString &msg, int type)
 {
-    appendHtml(QString("<span color=\"%1\">%2</span>").arg("red", msg));
+    if (type < 0 || type > 2)
+    {
+        type = 0;
+    }
+    appendHtml(QString("<font color=\"%1\">%2</font>").arg(COLORS[type], msg));
 }
 
 void LogWidget::logInfo(const QString &msg)
