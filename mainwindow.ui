@@ -744,7 +744,7 @@
             </property>
             <property name="icon">
              <iconset resource="icons.qrc">
-              <normaloff>:/icons/GIMP-Toolbox-BrushPencil-Icon.png</normaloff>:/icons/GIMP-Toolbox-BrushPencil-Icon.png</iconset>
+              <normaloff>:/icons/stock-tool-pencil-22.png</normaloff>:/icons/stock-tool-pencil-22.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -773,7 +773,7 @@
             </property>
             <property name="icon">
              <iconset resource="icons.qrc">
-              <normaloff>:/icons/GIMP-Toolbox-SelectionRectangle-Icon.png</normaloff>:/icons/GIMP-Toolbox-SelectionRectangle-Icon.png</iconset>
+              <normaloff>:/icons/stock-tool-rect-select-22.png</normaloff>:/icons/stock-tool-rect-select-22.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -799,7 +799,7 @@
             </property>
             <property name="icon">
              <iconset resource="icons.qrc">
-              <normaloff>:/icons/GIMP-Toolbox-SelectionWand-Icon.png</normaloff>:/icons/GIMP-Toolbox-SelectionWand-Icon.png</iconset>
+              <normaloff>:/icons/stock-tool-fuzzy-select-22.png</normaloff>:/icons/stock-tool-fuzzy-select-22.png</iconset>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -826,7 +826,6 @@
         </spacer>
        </item>
       </layout>
-      <zorder>tabWidget</zorder>
       <zorder>displayModeGroupBox</zorder>
       <zorder>selectionToolsGroupBox</zorder>
       <zorder>verticalSpacer</zorder>
@@ -857,8 +856,9 @@
      </widget>
     </item>
    </layout>
-   <zorder>gridLayoutWidget</zorder>
-   <zorder>gridLayoutWidget</zorder>
+   <zorder>demesParamFrame</zorder>
+   <zorder>logWidget</zorder>
+   <zorder>mapWidgetFrame</zorder>
    <zorder>tabWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
