@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     gui/MapWidget.cpp \
     gui/IntervalWidget.cpp \
     gui/DemesParamWidget.cpp \
-    gui/LogWidget.cpp
+    gui/LogWidget.cpp \
+    gui/CursorSelectTool.cpp \
+    gui/BoxSelectTool.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -37,7 +39,9 @@ HEADERS  += mainwindow.h \
     gui/MapWidget.h \
     gui/IntervalWidget.h \
     gui/DemesParamWidget.h \
-    gui/LogWidget.h
+    gui/LogWidget.h \
+    gui/CursorSelectTool.h \
+    gui/BoxSelectTool.h
 
 FORMS    += mainwindow.ui \
     gui/IntervalWidget.ui \

@@ -1,6 +1,8 @@
 #include "MapWidget.h"
 
 #include <QPainter>
+#include "CursorSelectTool.h"
+#include "BoxSelectTool.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 const QColor MapWidget::GROUP_COLORS[] = {
@@ -31,13 +33,27 @@ MapWidget::MapWidget(Map *map, QWidget *parent) :
     m_selectionMotion(false)
 {
     setAttribute(Qt::WA_StaticContents);
+    m_selectionMode = Cursor;
+    m_selectTool = new CursorSelectTool();
     connect(m_map, SIGNAL(changed()), this, SLOT(updateWidget()));
     updateImage();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+MapWidget::~MapWidget()
+{
+    delete m_selectTool;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
+    if (m_selectTool->handleMousePress(event, m_map, m_selection, m_demeSize))
+    {
+        emit selectionChanged(m_selection);
+        updateImage();
+    }
+    /*
     if (event->button() == Qt::LeftButton)
     {
         m_selectionMotion = true;
@@ -55,25 +71,49 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 
         selectDeme(event->pos());
         updateImage();
-
-        qDebug("press");
     }
+    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
+    if (m_selectTool->handleMouseMove(event, m_map, m_selection, m_demeSize))
+    {
+        emit selectionChanged(m_selection);
+        updateImage();
+    }
+    /*
     if (m_selectionMotion)
     {
         selectDeme(event->pos());
     }
+    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_selectionMotion = false;
-    qDebug("release");
+    if (m_selectTool->handleMouseRelease(event, m_map, m_selection, m_demeSize))
+    {
+        emit selectionChanged(m_selection);
+        updateImage();
+    }
+    /*
+    switch (m_selectionMode)
+    {
+    case Cursor:
+        m_selectionMotion = false;
+        break;
+
+    case Box:
+
+        break;
+
+    case Magic: break;
+    default: break;
+    }
+    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +207,7 @@ void MapWidget::updateImage()
 
     QPainter painter(&m_img);
 
-    m_img.fill(Qt::white);
+    m_img.fill(QWidget::palette().color(QWidget::backgroundRole()));
 
     double maxValue;
     switch (m_mode)
@@ -188,14 +228,16 @@ void MapWidget::updateImage()
                             getDemeColor(m_map->deme(x, y), maxValue));
         }
     }
-    for (int y = 0; y <= m_map->height(); y++)
+    for (int y = 0; y < m_map->height(); y++)
     {
         painter.drawLine(0, y * m_demeSize, m_map->width() * m_demeSize, y * m_demeSize);
     }
-    for (int x = 0; x <= m_map->width(); x++)
+    painter.drawLine(0, m_map->height() * m_demeSize - 0.5, m_map->width() * m_demeSize, m_map->height() * m_demeSize - 0.5);
+    for (int x = 0; x < m_map->width(); x++)
     {
         painter.drawLine(x * m_demeSize, 0, x * m_demeSize,  m_map->height() * m_demeSize);
     }
+    painter.drawLine(m_map->width() * m_demeSize - 0.5, 0, m_map->width() * m_demeSize - 0.5,  m_map->height() * m_demeSize);
     QPen pen;
     pen.setColor(Qt::green);
     pen.setWidth(3);
@@ -206,6 +248,9 @@ void MapWidget::updateImage()
         QPoint demeCoord = it.next();
         painter.drawRect(QRectF(demeCoord.x() * m_demeSize, demeCoord.y() * m_demeSize, m_demeSize, m_demeSize));
     }
+
+    m_selectTool->draw(painter, m_demeSize);
+
     update();
 }
 
@@ -223,8 +268,8 @@ void MapWidget::setDisplayMode(int mode)
         if (mode >= 0 && mode < LastDisplayMode)
         {
             m_mode = (DisplayMode)mode;
+            updateImage();
         }
-        updateImage();
     }
 }
 
@@ -237,7 +282,26 @@ void MapWidget::setSelectionMode(SelectionMode mode)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::setSelectionMode(int mode)
 {
-    // TODO
+    if (mode != m_selectionMode)
+    {
+        if (mode >= 0 && mode <= LastSelectionMode)
+        {
+            m_selectionMode = (SelectionMode)mode;
+            delete m_selectTool;
+
+            switch (m_selectionMode)
+            {
+            case Box:
+                m_selectTool = new BoxSelectTool();
+                break;
+            case Magic:
+            case Cursor:
+            default:
+                m_selectTool = new CursorSelectTool();
+                break;
+            }
+        }
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

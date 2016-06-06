@@ -23,5 +23,8 @@
         <file>icons/View-refresh.svg</file>
         <file>icons/Document-open.svg</file>
         <file>icons/Help-browser.svg</file>
+        <file>icons/GIMP-Toolbox-BrushPencil-Icon.png</file>
+        <file>icons/GIMP-Toolbox-SelectionRectangle-Icon.png</file>
+        <file>icons/GIMP-Toolbox-SelectionWand-Icon.png</file>
     </qresource>
 </RCC>

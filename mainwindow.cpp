@@ -11,13 +11,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Add the map widget
     m_mapWidget = new MapWidget(m_simulation.map());
     connect(ui->displayModeComboBox, SIGNAL(currentIndexChanged(int)), m_mapWidget, SLOT(setDisplayMode(int)));
-    ui->centerLayout->addWidget(m_mapWidget);
+    ui->mapWidgetFrame->layout()->addWidget(m_mapWidget);
 
     // Add the demes parameter widget
     m_demesParamWidget = new DemesParamWidget(m_simulation.map());
-    QVBoxLayout *demesParamFrameLayout = new QVBoxLayout();
-    demesParamFrameLayout->addWidget(m_demesParamWidget);
-    ui->demesParamFrame->setLayout(demesParamFrameLayout);
+    //QVBoxLayout *demesParamFrameLayout = new QVBoxLayout();
+    //demesParamFrameLayout->addWidget(m_demesParamWidget);
+    //ui->demesParamFrame->setLayout(demesParamFrameLayout);
+    ((QVBoxLayout*)ui->demesParamFrame->layout())->insertWidget(0, m_demesParamWidget);
     connect(m_mapWidget, SIGNAL(selectionChanged(QList<QPoint>&)), m_demesParamWidget, SLOT(setDemeSelection(QList<QPoint>&)));
 
     // Config files
@@ -183,5 +184,29 @@ void MainWindow::on_heterogeneityComboBox_currentIndexChanged(int index)
     else
     {
         ui->coefficientStackedWidget->setCurrentIndex(1);
+    }
+}
+
+void MainWindow::on_penToolPushButton_toggled(bool b)
+{
+    if (b)
+    {
+        m_mapWidget->setSelectionMode(MapWidget::Cursor);
+    }
+}
+
+void MainWindow::on_boxToolPushButton_toggled(bool b)
+{
+    if (b)
+    {
+        m_mapWidget->setSelectionMode(MapWidget::Box);
+    }
+}
+
+void MainWindow::on_magicToolPushButton_toggled(bool b)
+{
+    if (b)
+    {
+        m_mapWidget->setSelectionMode(MapWidget::Magic);
     }
 }

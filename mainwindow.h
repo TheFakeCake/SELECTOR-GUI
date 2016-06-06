@@ -30,6 +30,10 @@ private slots:
     void on_fixedFrequencyRadioButton_toggled(bool b);
     void on_heterogeneityComboBox_currentIndexChanged(int index);
 
+    void on_penToolPushButton_toggled(bool b);
+    void on_boxToolPushButton_toggled(bool b);
+    void on_magicToolPushButton_toggled(bool b);
+
 private:
     Ui::MainWindow *ui;
     MapWidget *m_mapWidget;

@@ -14,6 +14,16 @@ class MapWidget : public QWidget
 
 public:
 
+    class SelectTool
+    {
+    public:
+        virtual ~SelectTool() {}
+        virtual bool handleMousePress(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
+        virtual bool handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
+        virtual bool handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
+        virtual void draw(QPainter &painter, double demeSize) = 0;
+    };
+
     enum DisplayMode {
         Group = 0,
         Population,
@@ -35,6 +45,7 @@ public:
     static const QColor GROUP_COLORS[NB_GROUP_COLORS];
 
     explicit MapWidget(Map *map, QWidget *parent = 0);
+    ~MapWidget();
 
     void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -50,10 +61,6 @@ signals:
     void selectionChanged(QList<QPoint> & newSelection);
 
 public slots:
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// \brief Update the map image.
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
 
     void updateWidget();
     void setDisplayMode(DisplayMode mode);
@@ -74,6 +81,8 @@ private:
     QImage m_img;
 
     QList<QPoint> m_selection;
+    SelectionMode m_selectionMode;
+    SelectTool *m_selectTool;
     bool m_selectionMotion;
     bool m_selecting;
 };
