@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QList>
 #include <QPoint>
-#include "models/map.h"
+#include "gui/MapWidget.h"
 
 namespace Ui {
 class DemesParamWidget;
@@ -15,12 +15,11 @@ class DemesParamWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit DemesParamWidget(Map *map, QWidget *parent = 0);
+    explicit DemesParamWidget(MapWidget *mapWidget, QWidget *parent = 0);
     ~DemesParamWidget();
 
 public slots:
 
-    void setDemeSelection(QList<QPoint> & selection);
     void updateView();
 
 private slots:
@@ -37,8 +36,7 @@ private slots:
 private:
 
     Ui::DemesParamWidget *ui;
-    Map *m_map;
-    QList<QPoint> m_selection;
+    MapWidget *m_mapWidget;
 };
 
 #endif // DEMESPARAMWIDGET_H

@@ -2,12 +2,13 @@
 #include "ui_DemesParamWidget.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-DemesParamWidget::DemesParamWidget(Map *map, QWidget *parent) :
+DemesParamWidget::DemesParamWidget(MapWidget *mapWidget, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::DemesParamWidget),
-    m_map(map)
+    m_mapWidget(mapWidget)
 {
     ui->setupUi(this);
+    connect(m_mapWidget, SIGNAL(selectionChanged()), this, SLOT(updateView()));
     updateView();
 }
 
@@ -18,17 +19,12 @@ DemesParamWidget::~DemesParamWidget()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::setDemeSelection(QList<QPoint> & selection)
-{
-    m_selection = selection;
-    updateView();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
 void DemesParamWidget::updateView()
 {
+    QList<QPoint> selection = m_mapWidget->selection();
+
     // If no demes are selected, the widget is disabled
-    if (m_selection.empty())
+    if (selection.empty())
     {
         setEnabled(false);
         return;
@@ -46,11 +42,11 @@ void DemesParamWidget::updateView()
     int viewGroup = 1;
 
     // For each selected deme ...
-    QListIterator<QPoint> it(m_selection);
-    for (int i = 0; i < m_selection.size(); i++)
+    QListIterator<QPoint> it(selection);
+    for (int i = 0; i < selection.size(); i++)
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = m_mapWidget->map()->deme(demeCoord.x(), demeCoord.y());
 
         // If the view data is not initialized yet, it is initialized with the current deme parameters
         // if it is enabled.
@@ -125,7 +121,7 @@ void DemesParamWidget::updateView()
         ui->groupComboBox->addItem("Varying");
     }
 
-    std::map<int, std::vector<Deme*> > groups = m_map->groups();
+    std::map<int, std::vector<Deme*> > groups = m_mapWidget->map()->groups();
     for (auto it = groups.begin(); it != groups.end(); it++)
     {
         ui->groupComboBox->addItem(QString::number(it->first));
@@ -145,11 +141,12 @@ void DemesParamWidget::on_activatedCheckBox_clicked()
         ui->activatedCheckBox->setCheckState(Qt::Checked);
     }
 
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         deme->enable(ui->activatedCheckBox->isChecked());
     }
     updateView();
@@ -162,16 +159,19 @@ void DemesParamWidget::on_initialPopulationSpinBox_valueChanged(int value)
     {
         return;
     }
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setInitialPopulation(value);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
@@ -182,16 +182,19 @@ void DemesParamWidget::on_carryingCapacitySpinBox_valueChanged(int value)
     {
         return;
     }
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setCarryingCapacity(value);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
@@ -202,16 +205,19 @@ void DemesParamWidget::on_growthRateDoubleSpinBox_valueChanged(double value)
     {
         return;
     }
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setGrowthRate(value);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
@@ -222,16 +228,19 @@ void DemesParamWidget::on_migrationRateDoubleSpinBox_valueChanged(double value)
     {
         return;
     }
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setMigrationRate(value);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
@@ -242,16 +251,19 @@ void DemesParamWidget::on_sampleSizeSpinBox_valueChanged(int value)
     {
         return;
     }
-    QListIterator<QPoint> it(m_selection);
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setSampleSize(value);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
@@ -262,27 +274,30 @@ void DemesParamWidget::on_groupComboBox_currentTextChanged(const QString &text)
     {
         return;
     }
+    Map *map = m_mapWidget->map();
     int group = 1;
 
     if (text == "New group")
     {
-        group = m_map->groups().rbegin()->first + 1;
+        group = map->groups().rbegin()->first + 1;
     }
     else
     {
         group = text.toInt();
     }
 
-    QListIterator<QPoint> it(m_selection);
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
         QPoint demeCoord = it.next();
-        Deme *deme = m_map->deme(demeCoord.x(), demeCoord.y());
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
             deme->setGroup(group);
         }
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 

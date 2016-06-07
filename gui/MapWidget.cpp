@@ -6,8 +6,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 const QColor MapWidget::GROUP_COLORS[] = {
     QColor::fromRgb(40, 40, 40),
-    QColor::fromRgb(191,0,10),
     QColor::fromRgb(157,125,255),
+    QColor::fromRgb(191,0,10),
     QColor::fromRgb(38,128,0),
     QColor::fromRgb(255,125,131),
     QColor::fromRgb(0,153,255),
@@ -50,7 +50,7 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
 {
     if (m_selectTool->handleMousePress(event))
     {
-        emit selectionChanged(m_selection);
+        emit selectionChanged();
         updateImage();
     }
 }
@@ -60,7 +60,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_selectTool->handleMouseMove(event))
     {
-        emit selectionChanged(m_selection);
+        emit selectionChanged();
         updateImage();
     }
 }
@@ -70,7 +70,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (m_selectTool->handleMouseRelease(event))
     {
-        emit selectionChanged(m_selection);
+        emit selectionChanged();
         updateImage();
     }
 }
@@ -153,7 +153,7 @@ void MapWidget::updateWidget()
     }
     if (oldSelectionSize != m_selection.size())
     {
-        emit selectionChanged(m_selection);
+        emit selectionChanged();
     }
     if (! m_preventingUpdates)
     {

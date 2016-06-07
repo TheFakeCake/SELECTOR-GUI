@@ -57,7 +57,7 @@ public:
 
 signals:
 
-    void selectionChanged(QList<QPoint> & newSelection);
+    void selectionChanged();
 
 public slots:
 

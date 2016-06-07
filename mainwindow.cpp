@@ -17,12 +17,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->mapWidgetFrame->layout()->addWidget(m_mapWidget);
 
     // Add the demes parameter widget
-    m_demesParamWidget = new DemesParamWidget(m_simulation.map());
-    //QVBoxLayout *demesParamFrameLayout = new QVBoxLayout();
-    //demesParamFrameLayout->addWidget(m_demesParamWidget);
-    //ui->demesParamFrame->setLayout(demesParamFrameLayout);
+    m_demesParamWidget = new DemesParamWidget(m_mapWidget);
     ((QVBoxLayout*)ui->demesParamFrame->layout())->insertWidget(0, m_demesParamWidget);
-    connect(m_mapWidget, SIGNAL(selectionChanged(QList<QPoint>&)), m_demesParamWidget, SLOT(setDemeSelection(QList<QPoint>&)));
 
     // Config files
     m_simulationFromConfigFiles = false;
