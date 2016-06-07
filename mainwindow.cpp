@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include "gui/CursorSelectTool.h"
+#include "gui/BoxSelectTool.h"
+#include "gui/MagicSelectTool.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
@@ -191,7 +194,7 @@ void MainWindow::on_penToolPushButton_toggled(bool b)
 {
     if (b)
     {
-        m_mapWidget->setSelectionMode(MapWidget::Cursor);
+        m_mapWidget->setSelectTool(new CursorSelectTool());
     }
 }
 
@@ -199,7 +202,7 @@ void MainWindow::on_boxToolPushButton_toggled(bool b)
 {
     if (b)
     {
-        m_mapWidget->setSelectionMode(MapWidget::Box);
+        m_mapWidget->setSelectTool(new BoxSelectTool());
     }
 }
 
@@ -207,6 +210,6 @@ void MainWindow::on_magicToolPushButton_toggled(bool b)
 {
     if (b)
     {
-        m_mapWidget->setSelectionMode(MapWidget::Magic);
+        m_mapWidget->setSelectTool(new MagicSelectTool());
     }
 }

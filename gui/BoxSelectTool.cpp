@@ -2,25 +2,31 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 BoxSelectTool::BoxSelectTool() :
+    AbstractSelectTool(),
     m_selectionMotion(false)
 {
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool BoxSelectTool::handleMousePress(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize)
+bool BoxSelectTool::handleMousePress(QMouseEvent *event)
 {
     bool res = false;
 
     // Select demes with left button of the mouse
     if (event->button() == Qt::LeftButton)
     {
-        m_initialCoord.setX(event->pos().x() / demeSize);
-        m_initialCoord.setY(event->pos().y() / demeSize);
+        m_initialCoord.setX(event->pos().x() / m_mapWidget->demeSize());
+        m_initialCoord.setY(event->pos().y() / m_mapWidget->demeSize());
         m_mouseCoord = m_initialCoord;
 
-        if (m_initialCoord.x() >= map->width() || m_initialCoord.y() >= map->height())
+        // Check if clicked deme is inside the map
+        if (m_initialCoord.x() >= m_mapWidget->map()->width() || m_initialCoord.y() >= m_mapWidget->map()->height())
         {
+            if (! m_mapWidget->selection().empty())
+            {
+                m_mapWidget->selection().clear();
+                return true;
+            }
             return false;
         }
 
@@ -35,25 +41,23 @@ bool BoxSelectTool::handleMousePress(QMouseEvent *event, Map *map, QList<QPoint>
         // Else if SHIFT is NOT held down, reset the selection
         else if (! (event->modifiers() & Qt::ShiftModifier))
         {
-            selection.clear();
-            res = true;
+            if (! m_mapWidget->selection().empty())
+            {
+                m_mapWidget->selection().clear();
+                res = true;
+            }
         }
-
-/*
-        if (selectDeme(event->pos(), map, selection, demeSize))
-        {
-            res = true;
-        }
-*/
     }
     return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool BoxSelectTool::handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize)
+bool BoxSelectTool::handleMouseMove(QMouseEvent *event)
 {
-    QPoint mouseCoord(event->pos().x() / demeSize, event->pos().y() / demeSize);
+    QPoint mouseCoord(event->pos().x() / m_mapWidget->demeSize(), event->pos().y() / m_mapWidget->demeSize());
+    Map *map = m_mapWidget->map();
 
+    // Check if mouse coord is inside the map
     if (mouseCoord.x() < 0)
     {
         mouseCoord.setX(0);
@@ -72,6 +76,7 @@ bool BoxSelectTool::handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> 
         mouseCoord.setY(map->height() - 1);
     }
 
+    // If the mouse moved onto another deme
     if (mouseCoord != m_mouseCoord)
     {
         m_mouseCoord = mouseCoord;
@@ -81,12 +86,19 @@ bool BoxSelectTool::handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-bool BoxSelectTool::handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize)
+bool BoxSelectTool::handleMouseRelease(QMouseEvent *event)
 {
+    bool res = false;
+
+    // If the left button is released ...
     if (event->button() == Qt::LeftButton)
     {
+        // ... while selecting
         if (m_selectionMotion)
         {
+            QList<QPoint> &selection = m_mapWidget->selection();
+
+            // Add / remove all the demes inside the selection box to / from the selection
             QPoint first(qMin(m_initialCoord.x(), m_mouseCoord.x()), qMin(m_initialCoord.y(), m_mouseCoord.y()));
             QPoint last(qMax(m_initialCoord.x(), m_mouseCoord.x()), qMax(m_initialCoord.y(), m_mouseCoord.y()));
             QPoint cursor = first;
@@ -98,14 +110,20 @@ bool BoxSelectTool::handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoin
                 {
                     if (m_selecting)
                     {
-                        if (selection.indexOf(cursor) == -1)
+                        // Check if deme is not already in the selection when adding it
+                        if (! selection.contains(cursor))
                         {
                             selection << cursor;
+                            res = true;
                         }
                     }
                     else
                     {
-                        selection.removeOne(cursor);
+                        if (selection.contains(cursor))
+                        {
+                            selection.removeOne(cursor);
+                            res = true;
+                        }
                     }
 
                     cursor.setX(cursor.x() + 1);
@@ -113,19 +131,18 @@ bool BoxSelectTool::handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoin
                 cursor.setY(cursor.y() + 1);
             }
             m_selectionMotion = false;
-            return true;
         }
     }
-    return false;
+    return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void BoxSelectTool::draw(QPainter &painter, double demeSize)
+void BoxSelectTool::draw(QPainter &painter)
 {
+    // Paint the rectangle box if user is selecting something
     if (m_selectionMotion)
     {
-        qDebug(QString("Init coord : %1, %2\nCurr coord : %3 %4").arg(m_initialCoord.x()).arg(m_initialCoord.y()).arg(m_mouseCoord.x()).arg(m_mouseCoord.y()).toLatin1().data());
-
+        double demeSize = m_mapWidget->demeSize();
         QRectF rect(qMin(m_initialCoord.x(), m_mouseCoord.x()) * demeSize,
                     qMin(m_initialCoord.y(), m_mouseCoord.y()) * demeSize,
                     (qAbs(m_mouseCoord.x() - m_initialCoord.x()) + 1) * demeSize,

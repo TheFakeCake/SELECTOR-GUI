@@ -1,22 +1,22 @@
 #ifndef CURSORSELECTTOOL_H
 #define CURSORSELECTTOOL_H
 
-#include "MapWidget.h"
+#include "AbstractSelectTool.h"
 
-class CursorSelectTool : public MapWidget::SelectTool
+class CursorSelectTool : public AbstractSelectTool
 {
 public:
 
     CursorSelectTool();
 
-    bool handleMousePress(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    bool handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    bool handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    void draw(QPainter &painter, double demeSize) {}
+    bool handleMousePress(QMouseEvent *event);
+    bool handleMouseMove(QMouseEvent *event);
+    bool handleMouseRelease(QMouseEvent *event);
+    void draw(QPainter &painter) {}
 
 private:
 
-    bool selectDeme(const QPoint& mousePos, Map *map, QList<QPoint> &selection, double demeSize);
+    bool selectDeme(const QPoint& mousePos);
 
     bool m_selectionMotion;
     bool m_selecting;

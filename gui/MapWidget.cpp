@@ -2,7 +2,6 @@
 
 #include <QPainter>
 #include "CursorSelectTool.h"
-#include "BoxSelectTool.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 const QColor MapWidget::GROUP_COLORS[] = {
@@ -28,13 +27,14 @@ const QColor MapWidget::GROUP_COLORS[] = {
 MapWidget::MapWidget(Map *map, QWidget *parent) :
     QWidget(parent),
     m_map(map),
-    m_mode(Group),
+    m_displayMode(Group),
     m_img(1, 1, QImage::Format_ARGB32),
-    m_selectionMotion(false)
+    m_preventingUpdates(false),
+    m_needsUpdate(false),
+    m_selectTool(nullptr)
 {
     setAttribute(Qt::WA_StaticContents);
-    m_selectionMode = Cursor;
-    m_selectTool = new CursorSelectTool();
+    setSelectTool(new CursorSelectTool());
     connect(m_map, SIGNAL(changed()), this, SLOT(updateWidget()));
     updateImage();
 }
@@ -48,103 +48,30 @@ MapWidget::~MapWidget()
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mousePressEvent(QMouseEvent *event)
 {
-    if (m_selectTool->handleMousePress(event, m_map, m_selection, m_demeSize))
+    if (m_selectTool->handleMousePress(event))
     {
         emit selectionChanged(m_selection);
         updateImage();
     }
-    /*
-    if (event->button() == Qt::LeftButton)
-    {
-        m_selectionMotion = true;
-        m_selecting = true;
-
-        if (event->modifiers() & Qt::ControlModifier)
-        {
-            m_selecting = false;
-        }
-        else if (! (event->modifiers() & Qt::ShiftModifier))
-        {
-            m_selection.clear();
-            emit selectionChanged(m_selection);
-        }
-
-        selectDeme(event->pos());
-        updateImage();
-    }
-    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
 {
-    if (m_selectTool->handleMouseMove(event, m_map, m_selection, m_demeSize))
+    if (m_selectTool->handleMouseMove(event))
     {
         emit selectionChanged(m_selection);
         updateImage();
     }
-    /*
-    if (m_selectionMotion)
-    {
-        selectDeme(event->pos());
-    }
-    */
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (m_selectTool->handleMouseRelease(event, m_map, m_selection, m_demeSize))
+    if (m_selectTool->handleMouseRelease(event))
     {
         emit selectionChanged(m_selection);
         updateImage();
-    }
-    /*
-    switch (m_selectionMode)
-    {
-    case Cursor:
-        m_selectionMotion = false;
-        break;
-
-    case Box:
-
-        break;
-
-    case Magic: break;
-    default: break;
-    }
-    */
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapWidget::selectDeme(const QPoint& mousePos)
-{
-    Deme *deme = m_map->deme(mousePos.x() / m_demeSize,
-                             mousePos.y() / m_demeSize);
-    if (deme == nullptr)
-    {
-        return;
-    }
-
-    QPoint demeCoord(deme->x(), deme->y());
-
-    if (m_selecting)
-    {
-        if (! m_selection.contains(demeCoord))
-        {
-            m_selection.append(demeCoord);
-            updateImage();
-            emit selectionChanged(m_selection);
-        }
-    }
-    else
-    {
-        if (m_selection.contains(demeCoord))
-        {
-            m_selection.removeOne(demeCoord);
-            updateImage();
-            emit selectionChanged(m_selection);
-        }
     }
 }
 
@@ -173,7 +100,43 @@ void MapWidget::resizeEvent(QResizeEvent *event)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 MapWidget::DisplayMode MapWidget::displayMode() const
 {
-    return m_mode;
+    return m_displayMode;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+QList<QPoint> &MapWidget::selection()
+{
+    return m_selection;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+double MapWidget::demeSize() const
+{
+    return m_demeSize;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+Map *MapWidget::map() const
+{
+    return m_map;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void MapWidget::setPreventUpdates(bool b)
+{
+    m_preventingUpdates = b;
+
+    if (!b && m_needsUpdate)
+    {
+        m_needsUpdate = false;
+        updateWidget();
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool MapWidget::isPreventingUpdate()
+{
+    return m_preventingUpdates;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -192,7 +155,14 @@ void MapWidget::updateWidget()
     {
         emit selectionChanged(m_selection);
     }
-    updateImage();
+    if (! m_preventingUpdates)
+    {
+        updateImage();
+    }
+    else
+    {
+        m_needsUpdate = true;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -210,7 +180,7 @@ void MapWidget::updateImage()
     m_img.fill(QWidget::palette().color(QWidget::backgroundRole()));
 
     double maxValue;
-    switch (m_mode)
+    switch (m_displayMode)
     {
     case Population:        maxValue = m_map->maxInitialPopulation(); break;
     case CarryingCapacity:  maxValue = m_map->maxCarryingCapacity(); break;
@@ -249,7 +219,7 @@ void MapWidget::updateImage()
         painter.drawRect(QRectF(demeCoord.x() * m_demeSize, demeCoord.y() * m_demeSize, m_demeSize, m_demeSize));
     }
 
-    m_selectTool->draw(painter, m_demeSize);
+    m_selectTool->draw(painter);
 
     update();
 }
@@ -263,45 +233,22 @@ void MapWidget::setDisplayMode(DisplayMode mode)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void MapWidget::setDisplayMode(int mode)
 {
-    if (mode != m_mode)
+    if (mode != m_displayMode)
     {
         if (mode >= 0 && mode < LastDisplayMode)
         {
-            m_mode = (DisplayMode)mode;
+            m_displayMode = (DisplayMode)mode;
             updateImage();
         }
     }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapWidget::setSelectionMode(SelectionMode mode)
+void MapWidget::setSelectTool(AbstractSelectTool *tool)
 {
-    setSelectionMode((int)mode);
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void MapWidget::setSelectionMode(int mode)
-{
-    if (mode != m_selectionMode)
-    {
-        if (mode >= 0 && mode <= LastSelectionMode)
-        {
-            m_selectionMode = (SelectionMode)mode;
-            delete m_selectTool;
-
-            switch (m_selectionMode)
-            {
-            case Box:
-                m_selectTool = new BoxSelectTool();
-                break;
-            case Magic:
-            case Cursor:
-            default:
-                m_selectTool = new CursorSelectTool();
-                break;
-            }
-        }
-    }
+    delete m_selectTool;
+    tool->setMapWidget(this);
+    m_selectTool = tool;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,7 +273,7 @@ QColor MapWidget::getDemeColor(Deme* deme, double maxValue)
         return GROUP_COLORS[0];
     }
     double value;
-    switch (m_mode)
+    switch (m_displayMode)
     {
     case Group:
         // TODO : random color when group > 21
@@ -339,15 +286,11 @@ QColor MapWidget::getDemeColor(Deme* deme, double maxValue)
     default: return Qt::white;
     }
 
-    if (qFuzzyCompare(1.0, 1.0 + maxValue))
-    {
-        maxValue = 1.0;
-    }
     if (qFuzzyCompare(1.0, 1.0 + value))
     {
         return Qt::white;
     }
-    return QColor(value / maxValue * 128,
-                  value / maxValue * 128,
-                  value / maxValue * 255);
+    return QColor(255 - (value / maxValue) * 255,
+                  255 - (value / maxValue) * 225,
+                  255);
 }

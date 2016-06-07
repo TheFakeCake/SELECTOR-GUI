@@ -8,21 +8,15 @@
 #include <QList>
 #include "models/map.h"
 
+class AbstractSelectTool;
+
+#include "AbstractSelectTool.h"
+
 class MapWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-
-    class SelectTool
-    {
-    public:
-        virtual ~SelectTool() {}
-        virtual bool handleMousePress(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
-        virtual bool handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
-        virtual bool handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize) = 0;
-        virtual void draw(QPainter &painter, double demeSize) = 0;
-    };
 
     enum DisplayMode {
         Group = 0,
@@ -54,7 +48,12 @@ public:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
     DisplayMode displayMode() const;
-    QList<QPoint> & selection() const;
+    QList<QPoint> & selection();
+    double demeSize() const;
+    Map *map() const;
+
+    void setPreventUpdates(bool b);
+    bool isPreventingUpdate();
 
 signals:
 
@@ -65,26 +64,23 @@ public slots:
     void updateWidget();
     void setDisplayMode(DisplayMode mode);
     void setDisplayMode(int mode);
-    void setSelectionMode(SelectionMode mode);
-    void setSelectionMode(int mode);
+    void setSelectTool(AbstractSelectTool *tool);
 
 private:
 
     void resizeImage(QImage *image, const QSize &newSize);
     void updateImage();
     QColor getDemeColor(Deme* deme, double maxValue);
-    void selectDeme(const QPoint& mousePos);
 
     Map *m_map;
-    DisplayMode m_mode;
+    DisplayMode m_displayMode;
     double m_demeSize;
     QImage m_img;
+    bool m_preventingUpdates;
+    bool m_needsUpdate;
 
     QList<QPoint> m_selection;
-    SelectionMode m_selectionMode;
-    SelectTool *m_selectTool;
-    bool m_selectionMotion;
-    bool m_selecting;
+    AbstractSelectTool *m_selectTool;
 };
 
 #endif // MAPWIDGET_H

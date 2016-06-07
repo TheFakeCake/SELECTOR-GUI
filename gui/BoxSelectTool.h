@@ -1,19 +1,29 @@
 #ifndef BOXSELECTTOOL_H
 #define BOXSELECTTOOL_H
 
-#include "MapWidget.h"
-#include <QPainter>
+#include "AbstractSelectTool.h"
+#include <QPoint>
 
-class BoxSelectTool : public MapWidget::SelectTool
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// \brief The BoxSelectTool class
+///
+/// This selection tool is used to select groups of deme from a MapWidget. The selection is rectangle
+/// shaped (a box). The user must hold the left mouse button and drag th cursor over the map to create
+/// the selection box.
+/// Holding SHIFT while doing so keeps the old selection and adds the newly selected
+/// demes to it.
+/// Holding CTRL will also keep the old selection but the newly selected demes will be removed from it.
+////////////////////////////////////////////////////////////////////////////////////////////////////
+class BoxSelectTool : public AbstractSelectTool
 {
 public:
 
     BoxSelectTool();
 
-    bool handleMousePress(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    bool handleMouseMove(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    bool handleMouseRelease(QMouseEvent *event, Map *map, QList<QPoint> &selection, double demeSize);
-    void draw(QPainter &painter, double demeSize);
+    bool handleMousePress(QMouseEvent *event);
+    bool handleMouseMove(QMouseEvent *event);
+    bool handleMouseRelease(QMouseEvent *event);
+    void draw(QPainter &painter);
 
 private:
 
