@@ -2,6 +2,7 @@
 #define MAGICSELECTTOOL_H
 
 #include "AbstractSelectTool.h"
+#include "../models/deme.h"
 
 class MagicSelectTool : public AbstractSelectTool
 {
@@ -16,7 +17,8 @@ public:
 
 private:
 
-
+    template<typename T>
+    bool selectDemes(T value, T (Deme::*methodPtr)() const);
 };
 
 #endif // MAGICSELECTTOOL_H
