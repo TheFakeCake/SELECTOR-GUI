@@ -28,7 +28,8 @@ SOURCES += main.cpp\
     gui/CursorSelectTool.cpp \
     gui/BoxSelectTool.cpp \
     gui/MagicSelectTool.cpp \
-    gui/AbstractSelectTool.cpp
+    gui/AbstractSelectTool.cpp \
+    models/ABCInterval.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -45,7 +46,8 @@ HEADERS  += mainwindow.h \
     gui/CursorSelectTool.h \
     gui/BoxSelectTool.h \
     gui/MagicSelectTool.h \
-    gui/AbstractSelectTool.h
+    gui/AbstractSelectTool.h \
+    models/ABCInterval.h
 
 FORMS    += mainwindow.ui \
     gui/IntervalWidget.ui \
