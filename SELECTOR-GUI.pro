@@ -22,14 +22,15 @@ SOURCES += main.cpp\
     models/ModifierDeme.cpp \
     SelectorConfigFiles.cpp \
     gui/MapWidget.cpp \
-    gui/IntervalWidget.cpp \
     gui/DemesParamWidget.cpp \
     gui/LogWidget.cpp \
     gui/CursorSelectTool.cpp \
     gui/BoxSelectTool.cpp \
     gui/MagicSelectTool.cpp \
     gui/AbstractSelectTool.cpp \
-    models/ABCInterval.cpp
+    models/ABCInterval.cpp \
+    gui/ABCIntervalDoubleWidget.cpp \
+    gui/ABCIntervalIntWidget.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -40,18 +41,20 @@ HEADERS  += mainwindow.h \
     models/ModifierDeme.h \
     SelectorConfigFiles.h \
     gui/MapWidget.h \
-    gui/IntervalWidget.h \
     gui/DemesParamWidget.h \
     gui/LogWidget.h \
     gui/CursorSelectTool.h \
     gui/BoxSelectTool.h \
     gui/MagicSelectTool.h \
     gui/AbstractSelectTool.h \
-    models/ABCInterval.h
+    models/ABCInterval.h \
+    gui/ABCIntervalDoubleWidget.h \
+    gui/ABCIntervalIntWidget.h
 
 FORMS    += mainwindow.ui \
-    gui/IntervalWidget.ui \
-    gui/DemesParamWidget.ui
+    gui/DemesParamWidget.ui \
+    gui/ABCIntervalDoubleWidget.ui \
+    gui/ABCIntervalIntWidget.ui
 
 RESOURCES += \
     icons.qrc

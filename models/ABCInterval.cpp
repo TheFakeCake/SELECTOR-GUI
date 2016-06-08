@@ -1,13 +1,13 @@
 #include "ABCInterval.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-template<typename T> ABCInterval<T>::ABCInterval(Distribution distribution) :
-    m_distribution(distribution)
+template<typename T> ABCInterval<T>::ABCInterval() :
+    m_distribution(Uniform)
 {
 }
 
 template<typename T> ABCInterval<T>::ABCInterval(T value, Distribution distribution) :
-    m_distribution(distribution)
+    m_distribution(Uniform)
 {
     set(value);
 }
@@ -67,4 +67,50 @@ template<typename T>
 void ABCInterval<T>::setDistribution(ABCInterval<T>::Distribution distribution)
 {
     m_distribution = distribution;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+template<typename T> bool ABCInterval<T>::operator ==(const ABCInterval<T> &other)
+{
+    bool res = (m_min == other.m_min && m_max == other.m_max);
+    if (! isFixedValue())
+    {
+        res = (res && m_distribution == other.m_distribution);
+    }
+    return res;
+}
+
+template<typename T> bool ABCInterval<T>::operator !=(const ABCInterval<T> &other)
+{
+    return ! operator ==(other);
+}
+
+template<typename T> bool ABCInterval<T>::operator ==(const T &val) const
+{
+    return m_max == val && m_min == val;
+}
+
+template<typename T> bool ABCInterval<T>::operator !=(const T &val) const
+{
+    return ! operator ==(val);
+}
+
+template<typename T> bool ABCInterval<T>::operator <(const T &val) const
+{
+    return m_max < val || m_min < val;
+}
+
+template<typename T> bool ABCInterval<T>::operator >(const T &val) const
+{
+    return m_max > val || m_min > val;
+}
+
+template<typename T> bool ABCInterval<T>::operator <=(const T &val) const
+{
+    return m_max <= val || m_min <= val;
+}
+
+template<typename T> bool ABCInterval<T>::operator >=(const T &val) const
+{
+    return m_max >= val || m_min >= val;
 }

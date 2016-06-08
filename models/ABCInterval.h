@@ -8,9 +8,9 @@ public:
 
     enum Distribution { Uniform = 0, LogUniform, UniformDiscrete, LastDistribution };
 
-    ABCInterval(Distribution distribution = Uniform);
-    ABCInterval(T value, Distribution distribution = Uniform);
-    ABCInterval(T v1, T v2, Distribution distribution = Uniform);
+    ABCInterval();
+    ABCInterval(T value);
+    ABCInterval(T v1, T v2, Distribution distribution);
 
     bool isFixedValue() const           { return m_min == m_max; }
     T minimum() const                   { return m_max; }
@@ -22,6 +22,16 @@ public:
     void setMinimum(T min);
     void setMaximum(T max);
     void setDistribution(Distribution distribution);
+
+    bool operator ==(const ABCInterval<T> &other);
+    bool operator !=(const ABCInterval<T> &other);
+
+    bool operator ==(const T &val) const;
+    bool operator !=(const T &val) const;
+    bool operator <(const T &val) const;
+    bool operator >(const T &val) const;
+    bool operator <=(const T &val) const;
+    bool operator >=(const T &val) const;
 
 protected:
 
