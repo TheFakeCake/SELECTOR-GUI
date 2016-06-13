@@ -22,10 +22,11 @@ ABCInterval<double> ABCIntervalDoubleWidget::value() const
     {
         return ABCInterval<double>(ui->minValue->value(),
                                    ui->maxValue->value(),
-                                   (ABCInterval::Distribution)ui->distribution->currentIndex());
+                                   (ABCInterval<double>::Distribution)ui->distribution->currentIndex());
     }
     return ABCInterval<double>(ui->singleValue->value());
 }
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalDoubleWidget::setMinimumValue(double min)
 {
@@ -43,6 +44,14 @@ void ABCIntervalDoubleWidget::setMaximumValue(double max)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
+void ABCIntervalDoubleWidget::setSpecialValueText(const QString &text)
+{
+    ui->singleValue->setSpecialValueText(text);
+    ui->minValue->setSpecialValueText(text);
+    ui->maxValue->setSpecialValueText(text);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalDoubleWidget::setValue(const ABCInterval<double> &value)
 {
     if (value != this->value())
@@ -51,11 +60,13 @@ void ABCIntervalDoubleWidget::setValue(const ABCInterval<double> &value)
         if (value.isFixedValue())
         {
             ui->ABC->setChecked(false);
+            ui->stackedWidget->setCurrentWidget(ui->singleValuePage);
             ui->singleValue->setValue(value.maximum());
         }
         else
         {
             ui->ABC->setChecked(true);
+            ui->stackedWidget->setCurrentWidget(ui->intervalPage);
             ui->minValue->setValue(value.minimum());
             ui->maxValue->setValue(value.maximum());
         }
@@ -96,4 +107,29 @@ void ABCIntervalDoubleWidget::blockUISignals(bool b)
     ui->maxValue->blockSignals(b);
     ui->singleValue->blockSignals(b);
     ui->distribution->blockSignals(b);
+}
+
+void ABCIntervalDoubleWidget::on_singleValue_valueChanged(double arg1)
+{
+    emit minimumChanged(arg1);
+    emit maximumChanged(arg1);
+    emit valueChanged(this->value());
+}
+
+void ABCIntervalDoubleWidget::on_minValue_valueChanged(double arg1)
+{
+    emit minimumChanged(arg1);
+    emit valueChanged(this->value());
+}
+
+void ABCIntervalDoubleWidget::on_maxValue_valueChanged(double arg1)
+{
+    emit maximumChanged(arg1);
+    emit valueChanged(this->value());
+}
+
+void ABCIntervalDoubleWidget::on_distribution_currentIndexChanged(int index)
+{
+    emit distributionChanged(index);
+    emit valueChanged(this->value());
 }

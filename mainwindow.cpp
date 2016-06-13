@@ -20,6 +20,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_demesParamWidget = new DemesParamWidget(m_mapWidget);
     ((QVBoxLayout*)ui->demesParamFrame->layout())->insertWidget(0, m_demesParamWidget);
 
+    // General UI configuration
+    ui->firstAlleleFrequencyABC->layout()->setContentsMargins(25, 0, 0, 0);
+
+    // ABCIntervalWidgets configuration
+    ui->numberOfGenerationsABC->setMinimumValue(1);
+    ui->numberOfGenerationsABC->setMaximumValue(9999999);
+    ui->initialAllelePoolSizeABC->setMinimumValue(1);
+    ui->initialAllelePoolSizeABC->setMaximumValue(9999999);
+    ui->mutationRateABC->setMinimumValue(0.0);
+    ui->firstAlleleFrequencyABC->setMinimumValue(0.0);
+    ui->firstAlleleFrequencyABC->setMaximumValue(1.0);
+    ui->uniformCoefficientABC->setMinimumValue(0.0);
+    ui->northCoefficientABC->setMinimumValue(0.0);
+    ui->northCoefficientABC->setMaximumValue(1.0);
+    ui->southCoefficientABC->setMinimumValue(0.0);
+    ui->southCoefficientABC->setMaximumValue(1.0);
+    ui->eastCoefficientABC->setMinimumValue(0.0);
+    ui->eastCoefficientABC->setMaximumValue(1.0);
+    ui->westCoefficientABC->setMinimumValue(0.0);
+    ui->westCoefficientABC->setMaximumValue(1.0);
+
     // Config files
     m_simulationFromConfigFiles = false;
     connect(&m_configFiles, SIGNAL(info(QString)), ui->logWidget, SLOT(logInfo(QString)));
@@ -28,37 +49,41 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // SimulationModel -> View connections
     connect(&m_simulation, SIGNAL(nbSimulationsChanged(int)), ui->numberOfSimulationsSpinBox, SLOT(setValue(int)));
-    connect(&m_simulation, SIGNAL(nbGenerationsChanged(int)), ui->numberOfGenerationsSpinBox, SLOT(setValue(int)));
-    connect(&m_simulation, SIGNAL(initialAllelePoolSizeChanged(int)), ui->numberOfInitialAllelesSpinBox, SLOT(setValue(int)));
+    connect(&m_simulation, SIGNAL(nbGenerationsChanged(ABCInterval<int>)), ui->numberOfGenerationsABC, SLOT(setValue(ABCInterval<int>)));
+    connect(&m_simulation, SIGNAL(initialAllelePoolSizeChanged(ABCInterval<int>)), ui->initialAllelePoolSizeABC, SLOT(setValue(ABCInterval<int>)));
     connect(&m_simulation, SIGNAL(uniqueAllelePoolChanged(bool)), ui->uniquePoolRadioButton, SLOT(setChecked(bool)));
     connect(&m_simulation, SIGNAL(firstAlleleFrequencyEnabled(bool)), ui->initialFrequencyCheckBox, SLOT(setChecked(bool)));
-    connect(&m_simulation, SIGNAL(firstAlleleFrequencyChanged(double)), ui->fixedFrequencyDoubleSpinBox, SLOT(setValue(double)));
-    connect(&m_simulation, SIGNAL(mutationRateChanged(double)), ui->mutationRateDoubleSpinBox, SLOT(setValue(double)));
+    connect(&m_simulation, SIGNAL(firstAlleleFrequencyChanged(ABCInterval<double>)), ui->firstAlleleFrequencyABC, SLOT(setValue(ABCInterval<double>)));
+    connect(&m_simulation, SIGNAL(mutationRateChanged(ABCInterval<double>)), ui->mutationRateABC, SLOT(setValue(ABCInterval<double>)));
     connect(&m_simulation, SIGNAL(outputCompleteHistoryChanged(bool)), ui->completeHistoryCheckBox, SLOT(setChecked(bool)));
 
     // View -> SimulationModel connections
     connect(ui->numberOfSimulationsSpinBox, SIGNAL(valueChanged(int)), &m_simulation, SLOT(setNbSimulations(int)));
-    connect(ui->numberOfGenerationsSpinBox, SIGNAL(valueChanged(int)), &m_simulation, SLOT(setNbGenerations(int)));
-    connect(ui->numberOfInitialAllelesSpinBox, SIGNAL(valueChanged(int)), &m_simulation, SLOT(setInitialAllelePoolSize(int)));
+    connect(ui->numberOfGenerationsABC, SIGNAL(valueChanged(ABCInterval<int>)), &m_simulation, SLOT(setNbGenerations(ABCInterval<int>)));
+    connect(ui->initialAllelePoolSizeABC, SIGNAL(valueChanged(ABCInterval<int>)), &m_simulation, SLOT(setInitialAllelePoolSize(ABCInterval<int>)));
     connect(ui->uniquePoolRadioButton, SIGNAL(toggled(bool)), &m_simulation, SLOT(setUniqueAllelePool(bool)));
     connect(ui->initialFrequencyCheckBox, SIGNAL(toggled(bool)), &m_simulation, SLOT(enableFirstAlleleFrequency(bool)));
-    connect(ui->fixedFrequencyDoubleSpinBox, SIGNAL(valueChanged(double)), &m_simulation, SLOT(setFirstAlleleFrequency(double)));
-    connect(ui->mutationRateDoubleSpinBox, SIGNAL(valueChanged(double)), &m_simulation, SLOT(setMutationRate(double)));
+    connect(ui->firstAlleleFrequencyABC, SIGNAL(valueChanged(ABCInterval<double>)), &m_simulation, SLOT(setFirstAlleleFrequency(ABCInterval<double>)));
+    connect(ui->mutationRateABC, SIGNAL(valueChanged(ABCInterval<double>)), &m_simulation, SLOT(setMutationRate(ABCInterval<double>)));
     connect(ui->completeHistoryCheckBox, SIGNAL(toggled(bool)), &m_simulation, SLOT(setOutputCompleteHistory(bool)));
 
     // Simulation Selection -> View connections
     connect(m_simulation.selection(), SIGNAL(modelChanged(int)), ui->selectionModelComboBox, SLOT(setCurrentIndex(int)));
     connect(m_simulation.selection(), SIGNAL(heterogeneityChanged(int)), ui->heterogeneityComboBox, SLOT(setCurrentIndex(int)));
-    connect(m_simulation.selection(), SIGNAL(uniformCoefficientChanged(double)), ui->uniformCoefficientDoubleSpinBox, SLOT(setValue(double)));
-    connect(m_simulation.selection(), SIGNAL(northEastCoefficientChanged(double)), ui->northEastCoefficientDoubleSpinBox, SLOT(setValue(double)));
-    connect(m_simulation.selection(), SIGNAL(southWestCoefficientChanged(double)), ui->southWestCoefficientDoubleSpinBox, SLOT(setValue(double)));
+    connect(m_simulation.selection(), SIGNAL(uniformCoefficientChanged(ABCInterval<double>)), ui->uniformCoefficientABC, SLOT(setValue(ABCInterval<double>)));
+    connect(m_simulation.selection(), SIGNAL(northEastCoefficientChanged(ABCInterval<double>)), ui->northCoefficientABC, SLOT(setValue(ABCInterval<double>)));
+    connect(m_simulation.selection(), SIGNAL(northEastCoefficientChanged(ABCInterval<double>)), ui->eastCoefficientABC, SLOT(setValue(ABCInterval<double>)));
+    connect(m_simulation.selection(), SIGNAL(southWestCoefficientChanged(ABCInterval<double>)), ui->southCoefficientABC, SLOT(setValue(ABCInterval<double>)));
+    connect(m_simulation.selection(), SIGNAL(southWestCoefficientChanged(ABCInterval<double>)), ui->westCoefficientABC, SLOT(setValue(ABCInterval<double>)));
 
     // View -> Simulation Selection connections
     connect(ui->selectionModelComboBox, SIGNAL(currentIndexChanged(int)), m_simulation.selection(), SLOT(setModel(int)));
     connect(ui->heterogeneityComboBox, SIGNAL(currentIndexChanged(int)), m_simulation.selection(), SLOT(setHeterogeneity(int)));
-    connect(ui->uniformCoefficientDoubleSpinBox, SIGNAL(valueChanged(double)), m_simulation.selection(), SLOT(setUniformCoefficient(double)));
-    connect(ui->northEastCoefficientDoubleSpinBox, SIGNAL(valueChanged(double)), m_simulation.selection(), SLOT(setNorthEastCoefficient(double)));
-    connect(ui->southWestCoefficientDoubleSpinBox, SIGNAL(valueChanged(double)), m_simulation.selection(), SLOT(setSouthWestCoefficient(double)));
+    connect(ui->uniformCoefficientABC, SIGNAL(valueChanged(ABCInterval<double>)), m_simulation.selection(), SLOT(setUniformCoefficient(ABCInterval<double>)));
+    connect(ui->northCoefficientABC, SIGNAL(valueChanged(ABCInterval<double>)), m_simulation.selection(), SLOT(setNorthEastCoefficient(ABCInterval<double>)));
+    connect(ui->southCoefficientABC, SIGNAL(valueChanged(ABCInterval<double>)), m_simulation.selection(), SLOT(setSouthWestCoefficient(ABCInterval<double>)));
+    connect(ui->eastCoefficientABC, SIGNAL(valueChanged(ABCInterval<double>)), m_simulation.selection(), SLOT(setNorthEastCoefficient(ABCInterval<double>)));
+    connect(ui->westCoefficientABC, SIGNAL(valueChanged(ABCInterval<double>)), m_simulation.selection(), SLOT(setSouthWestCoefficient(ABCInterval<double>)));
 
     // Simulation Map -> Vuew connections
     connect(m_simulation.map(), SIGNAL(widthChanged(int)), ui->mapWidthSpinBox, SLOT(setValue(int)));
@@ -82,18 +107,20 @@ MainWindow::~MainWindow()
 void MainWindow::updateView()
 {
     ui->numberOfSimulationsSpinBox->setValue(m_simulation.nbSimulations());
-    ui->numberOfGenerationsSpinBox->setValue(m_simulation.nbGenerations());
-    ui->numberOfInitialAllelesSpinBox->setValue(m_simulation.initialAllelePoolSize());
+    ui->numberOfGenerationsABC->setValue(m_simulation.nbGenerations());
+    ui->initialAllelePoolSizeABC->setValue(m_simulation.initialAllelePoolSize());
     ui->uniquePoolRadioButton->setChecked(m_simulation.uniqueAllelePool());
     ui->multiplePoolRadioButton->setChecked(!m_simulation.uniqueAllelePool());
     ui->initialFrequencyCheckBox->setChecked(m_simulation.firstAlleleFrequency() > 0);
-    ui->fixedFrequencyDoubleSpinBox->setValue(m_simulation.firstAlleleFrequency());
-    ui->mutationRateDoubleSpinBox->setValue(m_simulation.mutationRate());
+    ui->firstAlleleFrequencyABC->setValue(m_simulation.firstAlleleFrequency());
+    ui->mutationRateABC->setValue(m_simulation.mutationRate());
     ui->selectionModelComboBox->setCurrentText(m_simulation.selection()->modelName());
     ui->heterogeneityComboBox->setCurrentText(m_simulation.selection()->heterogeneityName());
-    ui->uniformCoefficientDoubleSpinBox->setValue(m_simulation.selection()->uniformCoefficient());
-    ui->northEastCoefficientDoubleSpinBox->setValue(m_simulation.selection()->northEastCoefficient());
-    ui->southWestCoefficientDoubleSpinBox->setValue(m_simulation.selection()->southWestCoefficient());
+    ui->uniformCoefficientABC->setValue(m_simulation.selection()->uniformCoefficient());
+    ui->northCoefficientABC->setValue(m_simulation.selection()->northEastCoefficient());
+    ui->eastCoefficientABC->setValue(m_simulation.selection()->northEastCoefficient());
+    ui->southCoefficientABC->setValue(m_simulation.selection()->southWestCoefficient());
+    ui->westCoefficientABC->setValue(m_simulation.selection()->southWestCoefficient());
     ui->completeHistoryCheckBox->setChecked(m_simulation.outputCompleteHistory());
 
     // Map
@@ -140,8 +167,8 @@ void MainWindow::on_action_Save_triggered()
     }
     if (! m_configFiles.write(&m_simulation))
     {
-        QMessageBox::warning(this, tr("Error while saving configuration"),
-                             tr("Something happened while waving the simulation configuration :\n\n") + m_configFiles.errorMessages().join('\n'));
+        QMessageBox::warning(this, tr("SELECTOR-GUI"),
+                             tr("Something happened while saving the simulation configuration. See the log for more details.") + m_configFiles.errorMessages().join('\n'));
     }
     m_simulationFromConfigFiles = true;
 }
@@ -160,32 +187,14 @@ void MainWindow::on_action_SaveAs_triggered()
 
     if (! m_configFiles.write(&m_simulation))
     {
-        QMessageBox::warning(this, tr("Error while saving configuration"),
-                             tr("Something happened while waving the simulation configuration :\n\n") + m_configFiles.errorMessages().join('\n'));
+        QMessageBox::warning(this, tr("SELECTOR-GUI"),
+                             tr("Something happened while saving the simulation configuration. See the log for more details.") + m_configFiles.errorMessages().join('\n'));
     }
 
     m_simulationFromConfigFiles = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::on_fixedFrequencyRadioButton_toggled(bool b)
-{
-    ui->firstAlleleFrequencyStackedWidget->setCurrentIndex((int)(!b));
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void MainWindow::on_heterogeneityComboBox_currentIndexChanged(int index)
-{
-    if (index == 0)
-    {
-        ui->coefficientStackedWidget->setCurrentIndex(0);
-    }
-    else
-    {
-        ui->coefficientStackedWidget->setCurrentIndex(1);
-    }
-}
-
 void MainWindow::on_penToolPushButton_toggled(bool b)
 {
     if (b)
@@ -208,4 +217,9 @@ void MainWindow::on_magicToolPushButton_toggled(bool b)
     {
         m_mapWidget->setSelectTool(new MagicSelectTool());
     }
+}
+
+void MainWindow::on_initialFrequencyCheckBox_toggled(bool checked)
+{
+    ui->firstAlleleFrequencyABC->setEnabled(checked);
 }

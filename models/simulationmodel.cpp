@@ -22,12 +22,12 @@ int SimulationModel::nbSimulations() const
     return m_nbSimulations;
 }
 
-int SimulationModel::nbGenerations() const
+ABCInterval<int> SimulationModel::nbGenerations() const
 {
     return m_nbGenerations;
 }
 
-int SimulationModel::initialAllelePoolSize() const
+ABCInterval<int> SimulationModel::initialAllelePoolSize() const
 {
     return m_initialAllelePoolSize;
 }
@@ -37,12 +37,12 @@ bool SimulationModel::uniqueAllelePool() const
     return m_uniqueAllelePool;
 }
 
-double SimulationModel::firstAlleleFrequency() const
+ABCInterval<double> SimulationModel::firstAlleleFrequency() const
 {
     return m_firstAlleleFrequency;
 }
 
-double SimulationModel::mutationRate() const
+ABCInterval<double> SimulationModel::mutationRate() const
 {
     return m_mutationRate;
 }
@@ -79,33 +79,29 @@ void SimulationModel::setNbSimulations(int n)
     }
 }
 
-void SimulationModel::setNbGenerations(int n)
+void SimulationModel::setNbGenerations(ABCInterval<int> n)
 {
     if (n != m_nbGenerations)
     {
-        if (n > 0)
+        m_nbGenerations = n;
+
+        if (m_nbGenerations < 1)
         {
-            m_nbGenerations = n;
-        }
-        else
-        {
-            m_nbGenerations = 1;
+            n.setMinimum(1);
         }
         emit nbGenerationsChanged(m_nbGenerations);
     }
 }
 
-void SimulationModel::setInitialAllelePoolSize(int n)
+void SimulationModel::setInitialAllelePoolSize(ABCInterval<int> n)
 {
     if (n != m_initialAllelePoolSize)
     {
-        if (n > 0)
+        m_initialAllelePoolSize = n;
+
+        if (m_initialAllelePoolSize < 1)
         {
-            m_initialAllelePoolSize = n;
-        }
-        else
-        {
-            m_initialAllelePoolSize = 1;
+            m_initialAllelePoolSize.setMinimum(1);
         }
         emit initialAllelePoolSizeChanged(m_initialAllelePoolSize);
     }
@@ -128,38 +124,34 @@ void SimulationModel::enableFirstAlleleFrequency(bool b)
     }
 }
 
-void SimulationModel::setFirstAlleleFrequency(double frequency)
+void SimulationModel::setFirstAlleleFrequency(ABCInterval<double> frequency)
 {
     if (frequency != m_firstAlleleFrequency)
     {
-        if (frequency < 0.0)
+        m_firstAlleleFrequency = frequency;
+
+        if (m_firstAlleleFrequency < 0.0)
         {
-            m_firstAlleleFrequency = 0.0;
+            m_firstAlleleFrequency.setMinimum(0.0);
         }
-        else if(frequency > 1.0)
+        if (m_firstAlleleFrequency > 1.0)
         {
-            m_firstAlleleFrequency = 1.0;
-        }
-        else
-        {
-            m_firstAlleleFrequency = frequency;
+            m_firstAlleleFrequency.setMaximum(1.0);
         }
         emit firstAlleleFrequencyChanged(m_firstAlleleFrequency);
     }
     emit firstAlleleFrequencyEnabled(m_firstAlleleFrequency != 0.0);
 }
 
-void SimulationModel::setMutationRate(double mutationRate)
+void SimulationModel::setMutationRate(ABCInterval<double> mutationRate)
 {
     if (mutationRate != m_mutationRate)
     {
-        if (mutationRate >= 0.0)
+        m_mutationRate = mutationRate;
+
+        if (m_mutationRate < 0.0)
         {
-            m_mutationRate = mutationRate;
-        }
-        else
-        {
-            m_mutationRate = 0.0;
+            m_mutationRate.setMinimum(0.0);
         }
         emit mutationRateChanged(m_mutationRate);
     }

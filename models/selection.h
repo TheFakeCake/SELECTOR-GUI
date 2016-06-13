@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QStringList>
+#include "ABCInterval.h"
 
 class Selection : public QObject
 {
@@ -38,25 +39,27 @@ public:
     QString modelFullName() const;
     Heterogeneity heterogeneity() const;
     QString heterogeneityName() const;
-    double uniformCoefficient() const;
-    double northEastCoefficient() const;
-    double southWestCoefficient() const;
+    ABCInterval<double> uniformCoefficient() const;
+    ABCInterval<double> northEastCoefficient() const;
+    ABCInterval<double> southWestCoefficient() const;
 
 public slots:
+
     void setModel(Model model);
     void setModel(int model);
     void setHeterogeneity(Heterogeneity heterogeneity);
     void setHeterogeneity(int heterogeneity);
-    void setUniformCoefficient(double coeff);
-    void setNorthEastCoefficient(double coeff);
-    void setSouthWestCoefficient(double coeff);
+    void setUniformCoefficient(ABCInterval<double> coeff);
+    void setNorthEastCoefficient(ABCInterval<double> coeff);
+    void setSouthWestCoefficient(ABCInterval<double> coeff);
 
 signals:
+
     void modelChanged(int newModel);
     void heterogeneityChanged(int newHeterogeneity);
-    void uniformCoefficientChanged(double newCoeff);
-    void northEastCoefficientChanged(double newCoeff);
-    void southWestCoefficientChanged(double newCoeff);
+    void uniformCoefficientChanged(ABCInterval<double> newCoeff);
+    void northEastCoefficientChanged(ABCInterval<double> newCoeff);
+    void southWestCoefficientChanged(ABCInterval<double> newCoeff);
 
 protected:
 
@@ -66,9 +69,9 @@ protected:
 
     Model m_model;
     Heterogeneity m_heterogeneity;
-    double m_uniformCoefficient;
-    double m_northEastCoefficient;
-    double m_southWestCoefficient;
+    ABCInterval<double> m_uniformCoefficient;
+    ABCInterval<double> m_northEastCoefficient;
+    ABCInterval<double> m_southWestCoefficient;
 };
 
 #endif // SELECTION_H

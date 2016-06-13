@@ -32,22 +32,22 @@ int Deme::y() const
     return m_y;
 }
 
-int Deme::initialPopulation() const
+ABCInterval<int> Deme::initialPopulation() const
 {
     return m_initialPopulation;
 }
 
-int Deme::carryingCapacity() const
+ABCInterval<int> Deme::carryingCapacity() const
 {
     return m_carryingCapacity;
 }
 
-double Deme::growthRate() const
+ABCInterval<double> Deme::growthRate() const
 {
     return m_growthRate;
 }
 
-double Deme::migrationRate() const
+ABCInterval<double> Deme::migrationRate() const
 {
     return m_migrationRate;
 }
@@ -73,76 +73,68 @@ void Deme::enable(bool b)
     }
 }
 
-void Deme::setInitialPopulation(int population)
+void Deme::setInitialPopulation(ABCInterval<int> population)
 {
     if (population != m_initialPopulation)
     {
-        if (population >= 0)
+        m_initialPopulation = population;
+
+        if (m_initialPopulation < 0)
         {
-            m_initialPopulation = population;
-        }
-        else
-        {
-            m_initialPopulation = 0;
+            m_initialPopulation.setMinimum(0);
         }
         emit initialPopulationChanged(m_initialPopulation);
         m_parentMap->dispatchDemeChange(this);
     }
 }
 
-void Deme::setCarryingCapacity(int capacity)
+void Deme::setCarryingCapacity(ABCInterval<int> capacity)
 {
     if (capacity != m_carryingCapacity)
     {
-        if (capacity >= 0)
+        m_carryingCapacity = capacity;
+
+        if (m_carryingCapacity< 0)
         {
-            m_carryingCapacity = capacity;
-        }
-        else
-        {
-            m_carryingCapacity = 0;
+            m_carryingCapacity.setMinimum(0);
         }
         emit carryingCapacityChanged(m_carryingCapacity);
         m_parentMap->dispatchDemeChange(this);
     }
 }
 
-void Deme::setGrowthRate(double rate)
+void Deme::setGrowthRate(ABCInterval<double> rate)
 {
-    if (! qFuzzyCompare(1.0 + rate, 1.0 + m_growthRate))
+    if (rate != m_growthRate)
     {
-        if (rate < 0.0)
+        m_growthRate = rate;
+
+        if (m_growthRate < 0.0)
         {
-            m_growthRate = 0.0;
+            m_growthRate.setMinimum(0.0);
         }
-        else if (rate > 1.0)
+        if (m_growthRate > 1.0)
         {
-            m_growthRate = 1.0;
-        }
-        else
-        {
-            m_growthRate = rate;
+            m_growthRate.setMaximum(1.0);
         }
         emit growthRateChanged(m_growthRate);
         m_parentMap->dispatchDemeChange(this);
     }
 }
 
-void Deme::setMigrationRate(double rate)
+void Deme::setMigrationRate(ABCInterval<double> rate)
 {
-    if (! qFuzzyCompare(1.0 + rate, 1 + m_migrationRate))
+    if (rate != m_migrationRate)
     {
-        if (rate < 0.0)
+        m_migrationRate = rate;
+
+        if (m_migrationRate < 0.0)
         {
-            m_migrationRate = 0.0;
+            m_migrationRate.setMinimum(0.0);
         }
-        else if (rate > 1.0)
+        if (m_migrationRate > 1.0)
         {
-            m_migrationRate = 1.0;
-        }
-        else
-        {
-            m_migrationRate = rate;
+            m_migrationRate.setMaximum(1.0);
         }
         emit migrationRateChanged(m_migrationRate);
         m_parentMap->dispatchDemeChange(this);

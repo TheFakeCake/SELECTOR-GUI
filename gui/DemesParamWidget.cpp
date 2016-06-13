@@ -8,7 +8,20 @@ DemesParamWidget::DemesParamWidget(MapWidget *mapWidget, QWidget *parent) :
     m_mapWidget(mapWidget)
 {
     ui->setupUi(this);
+
+    ui->initialPopulationABC->setMinimumValue(-1);
+    ui->initialPopulationABC->setMaximumValue(999999999);
+    ui->initialPopulationABC->setSpecialValueText("Varying");
+    ui->carryingCapacityABC->setMinimumValue(-1);
+    ui->carryingCapacityABC->setMaximumValue(999999999);
+    ui->carryingCapacityABC->setSpecialValueText("Varying");
+    ui->growthRateABC->setMinimumValue(-0.001);
+    ui->growthRateABC->setSpecialValueText("Varying");
+    ui->migrationRateABC->setMinimumValue(-0.001);
+    ui->migrationRateABC->setSpecialValueText("Varying");
+
     connect(m_mapWidget, SIGNAL(selectionChanged()), this, SLOT(updateView()));
+
     updateView();
 }
 
@@ -34,10 +47,10 @@ void DemesParamWidget::updateView()
     // Data that will be displayed in the view widgets
     bool viewDataIsInitialized = false;
     Qt::CheckState viewActivatedState = Qt::Unchecked;
-    int viewInitialPopulation = 0;
-    int viewCarryingCapacity = 0;
-    double viewGrowthRate = 0.0;
-    double viewMigrationRate = 0.0;
+    ABCInterval<int> viewInitialPopulation(0);
+    ABCInterval<int> viewCarryingCapacity(0);
+    ABCInterval<double> viewGrowthRate(0.0);
+    ABCInterval<double> viewMigrationRate(0.0);
     int viewSampleSize = 0;
     int viewGroup = 1;
 
@@ -78,22 +91,42 @@ void DemesParamWidget::updateView()
             continue;
         }
 
-        if (deme->initialPopulation() != viewInitialPopulation)
+        if (deme->initialPopulation().minimum() != viewInitialPopulation.minimum())
         {
-            viewInitialPopulation = -1;
+            viewInitialPopulation.setMinimum(-1);
         }
-        if (deme->carryingCapacity() != viewCarryingCapacity)
+        if (deme->initialPopulation().maximum() != viewInitialPopulation.maximum())
         {
-            viewCarryingCapacity = -1;
+            viewInitialPopulation.setMaximum(-1);
         }
-        if (! qFuzzyCompare(1.0 + deme->growthRate(), 1.0 + viewGrowthRate))
+
+        if (deme->carryingCapacity().minimum() != viewCarryingCapacity.minimum())
         {
-            viewGrowthRate = -0.001;
+            viewCarryingCapacity.setMinimum(-1);
         }
-        if (! qFuzzyCompare(1.0 + deme->migrationRate(), 1.0 + viewMigrationRate))
+        if (deme->carryingCapacity().maximum() != viewCarryingCapacity.maximum())
         {
-            viewMigrationRate = -0.001;
+            viewCarryingCapacity.setMaximum(-1);
         }
+
+        if (deme->growthRate().minimum() != viewGrowthRate.minimum())
+        {
+            viewGrowthRate.setMinimum(-0.001);
+        }
+        if (deme->growthRate().maximum() != viewGrowthRate.maximum())
+        {
+            viewGrowthRate.setMaximum(-0.001);
+        }
+
+        if (deme->migrationRate().minimum() != viewMigrationRate.minimum())
+        {
+            viewMigrationRate.setMinimum(-0.001);
+        }
+        if (deme->migrationRate().maximum() != viewMigrationRate.maximum())
+        {
+            viewMigrationRate.setMaximum(-0.001);
+        }
+
         if (deme->sampleSize() != viewSampleSize)
         {
             viewSampleSize = -1;
@@ -106,10 +139,10 @@ void DemesParamWidget::updateView()
 
     // Display the data in the views
     ui->activatedCheckBox->setCheckState(viewActivatedState);
-    ui->initialPopulationSpinBox->setValue(viewInitialPopulation);
-    ui->carryingCapacitySpinBox->setValue(viewCarryingCapacity);
-    ui->growthRateDoubleSpinBox->setValue(viewGrowthRate);
-    ui->migrationRateDoubleSpinBox->setValue(viewMigrationRate);
+    ui->initialPopulationABC->setValue(viewInitialPopulation);
+    ui->carryingCapacityABC->setValue(viewCarryingCapacity);
+    ui->growthRateABC->setValue(viewGrowthRate);
+    ui->migrationRateABC->setValue(viewMigrationRate);
     ui->sampleSizeSpinBox->setValue(viewSampleSize);
 
     // The "group" combo box needs to be filled with the values from the map
@@ -142,6 +175,7 @@ void DemesParamWidget::on_activatedCheckBox_clicked()
     }
 
     Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
     QListIterator<QPoint> it(m_mapWidget->selection());
     while (it.hasNext())
     {
@@ -149,11 +183,160 @@ void DemesParamWidget::on_activatedCheckBox_clicked()
         Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         deme->enable(ui->activatedCheckBox->isChecked());
     }
+    m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::on_initialPopulationSpinBox_valueChanged(int value)
+void DemesParamWidget::on_activatedCheckBox_stateChanged(int state)
+{
+    // Enabled / disables the widgets if the "Active" checkbox is checked / unchecked
+    bool b = (state != Qt::Unchecked);
+    ui->initialPopulationLabel->setEnabled(b);
+    ui->initialPopulationABC->setEnabled(b);
+    ui->carryingCapacityLabel->setEnabled(b);
+    ui->carryingCapacityABC->setEnabled(b);
+    ui->growthRateLabel->setEnabled(b);
+    ui->growthRateABC->setEnabled(b);
+    ui->migrationRateLabel->setEnabled(b);
+    ui->migrationRateABC->setEnabled(b);
+    ui->sampleSizeLabel->setEnabled(b);
+    ui->sampleSizeSpinBox->setEnabled(b);
+    ui->groupLabel->setEnabled(b);
+    ui->groupComboBox->setEnabled(b);
+}
+/*
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void DemesParamWidget::on_initialPopulationABC_valueChanged(ABCInterval<int> value)
+{
+    if (value == -1)
+    {
+        return;
+    }
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
+    ABCInterval<int> newValue = value;
+    while (it.hasNext())
+    {
+        QPoint demeCoord = it.next();
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
+        if (deme->isEnabled())
+        {
+            if (value.minimum() == -1)
+            {
+                newValue.setMinimum(deme->initialPopulation().minimum());
+            }
+            else if (value.maximum() == -1)
+            {
+                newValue.setMaximum(deme->initialPopulation().maximum());
+            }
+            deme->setInitialPopulation(newValue);
+        }
+    }
+    m_mapWidget->setPreventUpdates(false);
+    updateView();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void DemesParamWidget::on_carryingCapacityABC_valueChanged(ABCInterval<int> value)
+{
+    if (value == -1)
+    {
+        return;
+    }
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
+    ABCInterval<int> newValue = value;
+    while (it.hasNext())
+    {
+        QPoint demeCoord = it.next();
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
+        if (deme->isEnabled())
+        {
+            if (value.minimum() == -1)
+            {
+                newValue.setMinimum(deme->carryingCapacity().minimum());
+            }
+            else if (value.maximum() == -1)
+            {
+                newValue.setMaximum(deme->carryingCapacity().maximum());
+            }
+            deme->setCarryingCapacity(newValue);
+        }
+    }
+    m_mapWidget->setPreventUpdates(false);
+    updateView();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void DemesParamWidget::on_growthRateABC_valueChanged(ABCInterval<double> value)
+{
+    if (value == -0.001)
+    {
+        return;
+    }
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
+    ABCInterval<double> newValue = value;
+    while (it.hasNext())
+    {
+        QPoint demeCoord = it.next();
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
+        if (deme->isEnabled())
+        {
+            if (value.minimum() == -0.001)
+            {
+                newValue.setMinimum(deme->growthRate().minimum());
+            }
+            else if (value.maximum() == -0.001)
+            {
+                newValue.setMaximum(deme->growthRate().maximum());
+            }
+            deme->setGrowthRate(newValue);
+        }
+    }
+    m_mapWidget->setPreventUpdates(false);
+    updateView();
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void DemesParamWidget::on_migrationRateABC_valueChanged(ABCInterval<double> value)
+{
+    if (value == -0.001)
+    {
+        return;
+    }
+    Map *map = m_mapWidget->map();
+    m_mapWidget->setPreventUpdates(true);
+    QListIterator<QPoint> it(m_mapWidget->selection());
+    ABCInterval<double> newValue = value;
+    while (it.hasNext())
+    {
+        QPoint demeCoord = it.next();
+        Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
+        if (deme->isEnabled())
+        {
+            if (value.minimum() == -0.001)
+            {
+                newValue.setMinimum(deme->migrationRate().minimum());
+            }
+            else if (value.maximum() == -0.001)
+            {
+                newValue.setMaximum(deme->migrationRate().maximum());
+            }
+            deme->setMigrationRate(newValue);
+        }
+    }
+    m_mapWidget->setPreventUpdates(false);
+    updateView();
+}
+*/
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void DemesParamWidget::on_initialPopulationABC_singleValueChanged(int value)
 {
     if (value == -1)
     {
@@ -168,7 +351,9 @@ void DemesParamWidget::on_initialPopulationSpinBox_valueChanged(int value)
         Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
-            deme->setInitialPopulation(value);
+            ABCInterval<int> newValue = deme->initialPopulation();
+            newValue.setValue(value);
+            deme->setInitialPopulation(newValue);
         }
     }
     m_mapWidget->setPreventUpdates(false);
@@ -176,7 +361,7 @@ void DemesParamWidget::on_initialPopulationSpinBox_valueChanged(int value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::on_carryingCapacitySpinBox_valueChanged(int value)
+void DemesParamWidget::on_initialPopulationABC_minimumChanged(int value)
 {
     if (value == -1)
     {
@@ -191,7 +376,9 @@ void DemesParamWidget::on_carryingCapacitySpinBox_valueChanged(int value)
         Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
-            deme->setCarryingCapacity(value);
+            ABCInterval<int> newValue = deme->initialPopulation();
+            newValue.setMinimum(value);
+            deme->setInitialPopulation(newValue);
         }
     }
     m_mapWidget->setPreventUpdates(false);
@@ -199,9 +386,9 @@ void DemesParamWidget::on_carryingCapacitySpinBox_valueChanged(int value)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::on_growthRateDoubleSpinBox_valueChanged(double value)
+void DemesParamWidget::on_initialPopulationABC_maximumChanged(int value)
 {
-    if (qFuzzyCompare(1.999, 2 + value))
+    if (value == -1)
     {
         return;
     }
@@ -214,17 +401,18 @@ void DemesParamWidget::on_growthRateDoubleSpinBox_valueChanged(double value)
         Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
-            deme->setGrowthRate(value);
+            ABCInterval<int> newValue = deme->initialPopulation();
+            newValue.setMaximum(value);
+            deme->setInitialPopulation(newValue);
         }
     }
     m_mapWidget->setPreventUpdates(false);
     updateView();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::on_migrationRateDoubleSpinBox_valueChanged(double value)
+void DemesParamWidget::on_initialPopulationABC_distributionChanged(int value)
 {
-    if (qFuzzyCompare(1.999, 2 + value))
+    if (value < 0 || value > ABCInterval<int>::LastDistribution)
     {
         return;
     }
@@ -237,7 +425,9 @@ void DemesParamWidget::on_migrationRateDoubleSpinBox_valueChanged(double value)
         Deme *deme = map->deme(demeCoord.x(), demeCoord.y());
         if (deme->isEnabled())
         {
-            deme->setMigrationRate(value);
+            ABCInterval<int> newValue = deme->initialPopulation();
+            newValue.setDistribution((ABCInterval<int>::Distribution)value);
+            deme->setInitialPopulation(newValue);
         }
     }
     m_mapWidget->setPreventUpdates(false);
@@ -301,21 +491,8 @@ void DemesParamWidget::on_groupComboBox_currentTextChanged(const QString &text)
     updateView();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void DemesParamWidget::on_activatedCheckBox_stateChanged(int state)
+template<typename T>
+void DemesParamWidget::setValueInModel(T value, void (Deme::*setterMethod)(T))
 {
-    // Enabled / disables the widgets if the "Active" checkbox is checked / unchecked
-    bool b = (state != Qt::Unchecked);
-    ui->initialPopulationLabel->setEnabled(b);
-    ui->initialPopulationSpinBox->setEnabled(b);
-    ui->carryingCapacityLabel->setEnabled(b);
-    ui->carryingCapacitySpinBox->setEnabled(b);
-    ui->growthRateLabel->setEnabled(b);
-    ui->growthRateDoubleSpinBox->setEnabled(b);
-    ui->migrationRateLabel->setEnabled(b);
-    ui->migrationRateDoubleSpinBox->setEnabled(b);
-    ui->sampleSizeLabel->setEnabled(b);
-    ui->sampleSizeSpinBox->setEnabled(b);
-    ui->groupLabel->setEnabled(b);
-    ui->groupComboBox->setEnabled(b);
+
 }

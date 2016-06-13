@@ -16,25 +16,28 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 public slots:
+
     void updateView();
 
 private slots:
+
     void on_action_OpenSimulation_triggered();
     void on_action_Save_triggered();
     void on_action_SaveAs_triggered();
-
-    void on_fixedFrequencyRadioButton_toggled(bool b);
-    void on_heterogeneityComboBox_currentIndexChanged(int index);
 
     void on_penToolPushButton_toggled(bool b);
     void on_boxToolPushButton_toggled(bool b);
     void on_magicToolPushButton_toggled(bool b);
 
+    void on_initialFrequencyCheckBox_toggled(bool checked);
+
 private:
+
     Ui::MainWindow *ui;
     MapWidget *m_mapWidget;
     DemesParamWidget *m_demesParamWidget;

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QString>
+#include "ABCInterval.h"
 
 class Map;
 
@@ -19,28 +20,28 @@ public:
     bool isEnabled() const;
     int x() const;
     int y() const;
-    int initialPopulation() const;
-    int carryingCapacity() const;
-    double growthRate() const;
-    double migrationRate() const;
+    ABCInterval<int> initialPopulation() const;
+    ABCInterval<int> carryingCapacity() const;
+    ABCInterval<double> growthRate() const;
+    ABCInterval<double> migrationRate() const;
     int group() const;
     int sampleSize() const;
 
     void enable(bool b);
-    void setInitialPopulation(int population);
-    void setCarryingCapacity(int capacity);
-    void setGrowthRate(double rate);
-    void setMigrationRate(double rate);
+    void setInitialPopulation(ABCInterval<int> population);
+    void setCarryingCapacity(ABCInterval<int> capacity);
+    void setGrowthRate(ABCInterval<double> rate);
+    void setMigrationRate(ABCInterval<double> rate);
     void setGroup(int group);
     void setSampleSize(int size);
 
 signals:
 
     void enabledChanged(bool b);
-    void initialPopulationChanged(int newPopulation);
-    void carryingCapacityChanged(int newCarryingCapacity);
-    void growthRateChanged(double newRate);
-    void migrationRateChanged(double newRate);
+    void initialPopulationChanged(ABCInterval<int> newPopulation);
+    void carryingCapacityChanged(ABCInterval<int> newCarryingCapacity);
+    void growthRateChanged(ABCInterval<double> newRate);
+    void migrationRateChanged(ABCInterval<double> newRate);
     void groupChanged(int newGroup);
     void sampleSizeChanged(int newSampleSize);
 
@@ -50,10 +51,10 @@ protected:
     bool m_enabled;
     int m_x;
     int m_y;
-    int m_initialPopulation;
-    int m_carryingCapacity;
-    double m_growthRate;
-    double m_migrationRate;
+    ABCInterval<int> m_initialPopulation;
+    ABCInterval<int> m_carryingCapacity;
+    ABCInterval<double> m_growthRate;
+    ABCInterval<double> m_migrationRate;
     int m_group;
     int m_sampleSize;
 };

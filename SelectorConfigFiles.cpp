@@ -7,6 +7,7 @@
 const QString SelectorConfigFiles::SELECTOR_PARAM_FILE       = QString("selector_param.txt");
 const QString SelectorConfigFiles::SELECTOR_STRUCTURE_FILE   = QString("selector_structure_%1.txt");
 const QString SelectorConfigFiles::SELECTOR_ALLDEMES_FILE    = QString("selector_alldemes_%1.txt");
+const QString SelectorConfigFiles::DISTRIBUTIONS[] = { "UNIFORM", "LOG_UNIFORM", "UNIFORM_DISCRETE" };
 
 const QString SPACE     = QString("[ \\t]");
 const QString COMMENT   = QString("(?:\\/\\/[^\\n]*)");
@@ -55,6 +56,30 @@ const QString SELECTOR_STRUCTURE_N_REGEX[] {
 /*01*/  LINE_END,
 /*02*/  "(abs|rel)"+SPACE+"+(abs|rel)"+SPACE+"+(abs|rel)"+LINE_END,
 };
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+QString SelectorConfigFiles::ABCIntervalToStr(ABCInterval<int> interval)
+{
+    if (interval.isFixedValue())
+    {
+        return QString::number(interval.minimum());
+    }
+    return QString("(*%1/%2/%3)").arg(DISTRIBUTIONS[interval.distribution()])
+                                 .arg(interval.minimum())
+                                 .arg(interval.maximum());
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+QString SelectorConfigFiles::ABCIntervalToStr(ABCInterval<double> interval)
+{
+    if (interval.isFixedValue())
+    {
+        return QString::number(interval.minimum());
+    }
+    return QString("(*%1/%2/%3)").arg(DISTRIBUTIONS[interval.distribution()])
+                                 .arg(interval.minimum())
+                                 .arg(interval.maximum());
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 SelectorConfigFiles::SelectorConfigFiles() : SelectorConfigFiles(".")
@@ -216,6 +241,7 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
     }
 
     emit info("SELECTOR configuration successfuly read.");
+
     return true;
 }
 
@@ -372,12 +398,12 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
     QTextStream out(&file);
     out << "// GENERAL SETTINGS\n"
         << sim->nbSimulations() << "\t// Number of simulations\n"
-        << sim->nbGenerations() << "\t// Number of generations\n"
+        << ABCIntervalToStr(sim->nbGenerations()) << "\t// Number of generations\n"
         << "// GENETIC SETTINGS\n"
-        << sim->initialAllelePoolSize() << "\t// Size of the initial allele pool\n"
+        << ABCIntervalToStr(sim->initialAllelePoolSize()) << "\t// Size of the initial allele pool\n"
         << (sim->uniqueAllelePool() ? "0" : "1") << "\t// 0: One unique allele pool | 1: Independant allele pools for each population\n"
-        << sim->firstAlleleFrequency() << "\t// Initial frequency for allele \"a1\"\n"
-        << sim->mutationRate() << "\t// Mutation rate\n"
+        << ABCIntervalToStr(sim->firstAlleleFrequency()) << "\t// Initial frequency for allele \"a1\"\n"
+        << ABCIntervalToStr(sim->mutationRate()) << "\t// Mutation rate\n"
         << "// SELECTION SETTINGS\n";
     switch (sim->selection()->model())
     {
@@ -393,9 +419,9 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
     }
     out << "\t// Selection model. 1: SOS | 2: FDS | 3: DPS\n"
         << sim->selection()->heterogeneity() << "\t// Selection heterogeneity. 0: Uniform | 1: Latitudinal | 2: Longitudinal\n"
-        << sim->selection()->uniformCoefficient() << "\t// Uniform selection coefficient\n"
-        << sim->selection()->northEastCoefficient() << "\t// Northern or eastern selection coefficient\n"
-        << sim->selection()->southWestCoefficient() << "\t// Southern or western selection coefficient\n"
+        << ABCIntervalToStr(sim->selection()->uniformCoefficient()) << "\t// Uniform selection coefficient\n"
+        << ABCIntervalToStr(sim->selection()->northEastCoefficient()) << "\t// Northern or eastern selection coefficient\n"
+        << ABCIntervalToStr(sim->selection()->southWestCoefficient()) << "\t// Southern or western selection coefficient\n"
         << "// OUTPUT SETTINGS\n"
         << (sim->outputCompleteHistory() ? "1" : "0") << "\t// Generate allele frequency files for last simulation. 1: Yes | 0: No\n"
         << "// WORLD STRUCTURE AND DEMOGRAPHY SETTINGS\n"
@@ -450,10 +476,10 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
         for (int x = 0; x < sim->map()->width(); x++)
         {
             Deme *deme = sim->map()->deme(x, y);
-            out << QString("%1\t%2\t%3\t%4\t%5\t%6\n").arg(deme->initialPopulation())
-                                                      .arg(deme->isEnabled() ? deme->carryingCapacity() : -1)
-                                                      .arg(deme->growthRate())
-                                                      .arg(deme->migrationRate())
+            out << QString("%1\t%2\t%3\t%4\t%5\t%6\n").arg(ABCIntervalToStr(deme->initialPopulation()))
+                                                      .arg(deme->isEnabled() ? ABCIntervalToStr(deme->carryingCapacity()) : "-1")
+                                                      .arg(ABCIntervalToStr(deme->growthRate()))
+                                                      .arg(ABCIntervalToStr(deme->migrationRate()))
                                                       .arg(deme->group())
                                                       .arg(deme->sampleSize());
         }
@@ -523,7 +549,6 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
         }
         file.close();
     }
-
     return m_errorMessages.empty();
 }
 

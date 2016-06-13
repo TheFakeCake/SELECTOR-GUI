@@ -11,6 +11,9 @@ class SelectorConfigFiles : public QObject
 
 public:
 
+    static QString ABCIntervalToStr(ABCInterval<int> interval);
+    static QString ABCIntervalToStr(ABCInterval<double> interval);
+
     SelectorConfigFiles();
     SelectorConfigFiles(QString directory);
 
@@ -33,6 +36,7 @@ private:
     static const QString SELECTOR_PARAM_FILE;
     static const QString SELECTOR_STRUCTURE_FILE;
     static const QString SELECTOR_ALLDEMES_FILE;
+    static const QString DISTRIBUTIONS[];
 
     void _handleParamLine(SimulationModel *sim, int line, QRegExp *regex,
                           bool &groupedDemes, int &nbRoutes, int &nbStructures);

@@ -278,10 +278,10 @@ QColor MapWidget::getDemeColor(Deme* deme, double maxValue)
     case Group:
         // TODO : random color when group > 21
         return GROUP_COLORS[deme->group()];
-    case Population:        value = deme->initialPopulation(); break;
-    case CarryingCapacity:  value = deme->carryingCapacity(); break;
-    case GrowthRate:        value = deme->growthRate(); break;
-    case MigrationRate:     value = deme->migrationRate(); break;
+    case Population:        value = deme->initialPopulation().maximum(); break;
+    case CarryingCapacity:  value = deme->carryingCapacity().maximum(); break;
+    case GrowthRate:        value = deme->growthRate().maximum(); break;
+    case MigrationRate:     value = deme->migrationRate().maximum(); break;
     case SampleSize:        value = deme->sampleSize(); break;
     default: return Qt::white;
     }

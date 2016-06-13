@@ -6,15 +6,20 @@ class ABCInterval
 {
 public:
 
-    enum Distribution { Uniform = 0, LogUniform, UniformDiscrete, LastDistribution };
+    enum Distribution {
+        Uniform = 0,
+        LogUniform,
+        UniformDiscrete,
+        LastDistribution = UniformDiscrete
+    };
 
     ABCInterval();
     ABCInterval(T value);
     ABCInterval(T v1, T v2, Distribution distribution);
 
     bool isFixedValue() const           { return m_min == m_max; }
-    T minimum() const                   { return m_max; }
-    T maximum() const                   { return m_min; }
+    T minimum() const                   { return m_min; }
+    T maximum() const                   { return m_max; }
     Distribution distribution() const   { return m_distribution; }
 
     void setValue(T value);
@@ -23,8 +28,8 @@ public:
     void setMaximum(T max);
     void setDistribution(Distribution distribution);
 
-    bool operator ==(const ABCInterval<T> &other);
-    bool operator !=(const ABCInterval<T> &other);
+    bool operator ==(const ABCInterval<T> &other) const;
+    bool operator !=(const ABCInterval<T> &other) const;
 
     bool operator ==(const T &val) const;
     bool operator !=(const T &val) const;

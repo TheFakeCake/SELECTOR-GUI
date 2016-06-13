@@ -71,17 +71,17 @@ QString Selection::heterogeneityName() const
     return heterogeneityName(m_heterogeneity);
 }
 
-double Selection::uniformCoefficient() const
+ABCInterval<double> Selection::uniformCoefficient() const
 {
     return m_uniformCoefficient;
 }
 
-double Selection::northEastCoefficient() const
+ABCInterval<double> Selection::northEastCoefficient() const
 {
     return m_northEastCoefficient;
 }
 
-double Selection::southWestCoefficient() const
+ABCInterval<double> Selection::southWestCoefficient() const
 {
     return m_southWestCoefficient;
 }
@@ -137,61 +137,55 @@ void Selection::setHeterogeneity(int heterogeneity)
     }
 }
 
-void Selection::setUniformCoefficient(double coeff)
+void Selection::setUniformCoefficient(ABCInterval<double> coeff)
 {
     if (coeff != m_uniformCoefficient)
     {
-        if (coeff < 0.0)
+        m_uniformCoefficient = coeff;
+
+        if (m_uniformCoefficient < 0.0)
         {
-            m_uniformCoefficient = 0.0;
+            m_uniformCoefficient.setMinimum(0.0);
         }
-        else if (coeff > 1.0)
+        if (m_uniformCoefficient > 1.0)
         {
-            m_uniformCoefficient = 1.0;
-        }
-        else
-        {
-            m_uniformCoefficient = coeff;
+            m_uniformCoefficient.setMaximum(1.0);
         }
         emit uniformCoefficientChanged(m_uniformCoefficient);
     }
 }
 
-void Selection::setNorthEastCoefficient(double coeff)
+void Selection::setNorthEastCoefficient(ABCInterval<double> coeff)
 {
     if (coeff != m_northEastCoefficient)
     {
-        if (coeff < 0.0)
+        m_northEastCoefficient = coeff;
+
+        if (m_northEastCoefficient < 0.0)
         {
-            m_northEastCoefficient = 0.0;
+            m_northEastCoefficient.setMinimum(0.0);
         }
-        else if (coeff > 1.0)
+        if (m_northEastCoefficient > 1.0)
         {
-            m_northEastCoefficient = 1.0;
-        }
-        else
-        {
-            m_northEastCoefficient = coeff;
+            m_northEastCoefficient.setMaximum(1.0);
         }
         emit northEastCoefficientChanged(m_northEastCoefficient);
     }
 }
 
-void Selection::setSouthWestCoefficient(double coeff)
+void Selection::setSouthWestCoefficient(ABCInterval<double> coeff)
 {
     if (coeff != m_southWestCoefficient)
     {
-        if (coeff < 0.0)
+        m_southWestCoefficient = coeff;
+
+        if (m_southWestCoefficient < 0.0)
         {
-            m_southWestCoefficient = 0.0;
+            m_southWestCoefficient.setMinimum(0.0);
         }
-        else if (coeff > 1.0)
+        if (m_southWestCoefficient > 1.0)
         {
-            m_southWestCoefficient = 1.0;
-        }
-        else
-        {
-            m_southWestCoefficient = coeff;
+            m_southWestCoefficient.setMaximum(1.0);
         }
         emit southWestCoefficientChanged(m_southWestCoefficient);
     }

@@ -19,6 +19,11 @@ public:
 
     ABCInterval<int> value() const;
 
+    void setMinimumValue(int min);
+    void setMaximumValue(int max);
+    void setSpecialValueText(const QString &text);
+    void blockSignals(bool b);
+
 public slots:
 
     void setValue(const ABCInterval<int> &value);
@@ -26,14 +31,20 @@ public slots:
 signals:
 
     void valueChanged(ABCInterval<int> newValue);
+    void singleValueChanged(int newValue);
+    void maximumChanged(int newMax);
+    void minimumChanged(int newMin);
+    void distributionChanged(int newDistribution);
 
 private slots:
 
     void on_ABC_toggled(bool checked);
+    void on_singleValue_valueChanged(int arg1);
+    void on_minValue_valueChanged(int arg1);
+    void on_maxValue_valueChanged(int arg1);
+    void on_distribution_currentIndexChanged(int index);
 
 private:
-
-    void blockUISignals(bool b);
 
     Ui::ABCIntervalIntWidget *ui;
 };

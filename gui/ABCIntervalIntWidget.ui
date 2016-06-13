@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IntervalWidget</class>
- <widget class="QWidget" name="IntervalWidget">
+ <class>ABCIntervalIntWidget</class>
+ <widget class="QWidget" name="ABCIntervalIntWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -9,6 +9,9 @@
     <width>293</width>
     <height>33</height>
    </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <property name="leftMargin">
@@ -26,7 +29,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="singleValuePage">
       <layout class="QHBoxLayout" name="horizontalLayout_3">

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>236</width>
-    <height>261</height>
+    <width>276</width>
+    <height>367</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,11 +37,32 @@
      <property name="title">
       <string>Selected demes</string>
      </property>
-     <layout class="QFormLayout" name="formLayout">
+     <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
        <widget class="QLabel" name="activatedLabel">
         <property name="text">
          <string>Activated :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="carryingCapacityLabel">
+        <property name="text">
+         <string>Carrying capacity :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QLabel" name="growthRateLabel">
+        <property name="text">
+         <string>Growth rate :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="groupLabel">
+        <property name="text">
+         <string>Group :</string>
         </property>
        </widget>
       </item>
@@ -52,118 +73,20 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="initialPopulationLabel">
-        <property name="text">
-         <string>Initial population :</string>
-        </property>
-       </widget>
+      <item row="4" column="0" colspan="2">
+       <widget class="ABCIntervalIntWidget" name="carryingCapacityABC" native="true"/>
       </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="initialPopulationSpinBox">
-        <property name="specialValueText">
-         <string>Varying</string>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="minimum">
-         <number>-1</number>
-        </property>
-        <property name="maximum">
-         <number>999999999</number>
-        </property>
-        <property name="singleStep">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="carryingCapacityLabel">
-        <property name="text">
-         <string>Carrying capacity :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="carryingCapacitySpinBox">
-        <property name="specialValueText">
-         <string>Varying</string>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="minimum">
-         <number>-1</number>
-        </property>
-        <property name="maximum">
-         <number>999999999</number>
-        </property>
-        <property name="singleStep">
-         <number>10</number>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="growthRateLabel">
-        <property name="text">
-         <string>Growth rate :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QDoubleSpinBox" name="growthRateDoubleSpinBox">
-        <property name="specialValueText">
-         <string>Varying</string>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="minimum">
-         <double>-0.001000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.050000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="migrationRateLabel">
-        <property name="text">
-         <string>Migration rate :</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QDoubleSpinBox" name="migrationRateDoubleSpinBox">
-        <property name="specialValueText">
-         <string>Varying</string>
-        </property>
-        <property name="keyboardTracking">
-         <bool>false</bool>
-        </property>
-        <property name="decimals">
-         <number>3</number>
-        </property>
-        <property name="minimum">
-         <double>-0.001000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.050000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="0">
+      <item row="9" column="0">
        <widget class="QLabel" name="sampleSizeLabel">
         <property name="text">
          <string>Sample size :</string>
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
+      <item row="10" column="1">
+       <widget class="QComboBox" name="groupComboBox"/>
+      </item>
+      <item row="9" column="1">
        <widget class="QSpinBox" name="sampleSizeSpinBox">
         <property name="specialValueText">
          <string>Varying</string>
@@ -179,21 +102,48 @@
         </property>
        </widget>
       </item>
-      <item row="6" column="0">
-       <widget class="QLabel" name="groupLabel">
+      <item row="7" column="0">
+       <widget class="QLabel" name="migrationRateLabel">
         <property name="text">
-         <string>Group :</string>
+         <string>Migration rate :</string>
         </property>
        </widget>
       </item>
-      <item row="6" column="1">
-       <widget class="QComboBox" name="groupComboBox"/>
+      <item row="6" column="0" colspan="2">
+       <widget class="ABCIntervalDoubleWidget" name="growthRateABC" native="true"/>
+      </item>
+      <item row="8" column="0" colspan="2">
+       <widget class="ABCIntervalDoubleWidget" name="migrationRateABC" native="true"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="initialPopulationLabel">
+        <property name="text">
+         <string>Initial population :</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0" colspan="2">
+       <widget class="ABCIntervalIntWidget" name="initialPopulationABC" native="true"/>
       </item>
      </layout>
     </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ABCIntervalIntWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/ABCIntervalIntWidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ABCIntervalDoubleWidget</class>
+   <extends>QWidget</extends>
+   <header>gui/ABCIntervalDoubleWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

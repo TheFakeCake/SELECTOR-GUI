@@ -25,13 +25,13 @@ bool MagicSelectTool::handleMousePress(QMouseEvent *event)
     case MapWidget::Group:
         return selectDemes<int>(deme->group(), &Deme::group);
     case MapWidget::Population:
-        return selectDemes<int>(deme->initialPopulation(), &Deme::initialPopulation);
+        return selectDemes<ABCInterval<int> >(deme->initialPopulation(), &Deme::initialPopulation);
     case MapWidget::CarryingCapacity:
-        return selectDemes<int>(deme->carryingCapacity(), &Deme::carryingCapacity);
+        return selectDemes<ABCInterval<int> >(deme->carryingCapacity(), &Deme::carryingCapacity);
     case MapWidget::GrowthRate:
-        return selectDemes<double>(deme->growthRate(), &Deme::growthRate);
+        return selectDemes<ABCInterval<double> >(deme->growthRate(), &Deme::growthRate);
     case MapWidget::MigrationRate:
-        return selectDemes<double>(deme->migrationRate(), &Deme::migrationRate);
+        return selectDemes<ABCInterval<double> >(deme->migrationRate(), &Deme::migrationRate);
     case MapWidget::SampleSize:
         return selectDemes<int>(deme->sampleSize(), &Deme::sampleSize);
     default:

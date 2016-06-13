@@ -184,7 +184,7 @@ int Map::maxInitialPopulation() const
             Deme *deme = m_demes[y][x];
             if (deme->isEnabled() && deme->initialPopulation() > max)
             {
-                max = deme->initialPopulation();
+                max = deme->initialPopulation().maximum();
             }
         }
     }
@@ -202,7 +202,7 @@ int Map::maxCarryingCapacity() const
             Deme *deme = m_demes[y][x];
             if (deme->isEnabled() && deme->carryingCapacity() > max)
             {
-                max = deme->carryingCapacity();
+                max = deme->carryingCapacity().maximum();
             }
         }
     }
@@ -220,7 +220,7 @@ double Map::maxGrowthRate() const
             Deme *deme = m_demes[y][x];
             if (deme->isEnabled() && deme->growthRate() > max)
             {
-                max = deme->growthRate();
+                max = deme->growthRate().maximum();
             }
         }
     }
@@ -238,7 +238,7 @@ double Map::maxMigrationRate() const
             Deme *deme = m_demes[y][x];
             if (deme->isEnabled() && deme->migrationRate() > max)
             {
-                max = deme->migrationRate();
+                max = deme->migrationRate().maximum();
             }
         }
     }
