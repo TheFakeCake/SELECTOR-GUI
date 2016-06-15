@@ -146,7 +146,7 @@ int Map::height() const
 Deme* Map::deme(int x, int y)
 {
     // Check if coordinates are within the map
-    if (x < width() && y < height())
+    if (x >= 0 && x < width() && y >= 0 && y < height())
     {
         return m_demes[y][x];
     }

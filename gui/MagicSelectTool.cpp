@@ -63,8 +63,8 @@ bool MagicSelectTool::selectDemes(T value, T (Deme::*methodPtr)() const)
     {
         for (int x = 0; x < map->width(); x++)
         {
-            // ... if it's the same, the deme is added to the selection
-            if ((map->deme(x, y)->*methodPtr)() == value)
+            // ... if the deme is active and its value is the same, the deme is added to the selection
+            if (map->deme(x, y)->isEnabled() && (map->deme(x, y)->*methodPtr)() == value)
             {
                 selection << QPoint(x, y);
             }
