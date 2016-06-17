@@ -72,7 +72,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QDoubleSpinBox" name="minValue">
+        <widget class="QDoubleSpinBox" name="secondBound">
          <property name="decimals">
           <number>3</number>
          </property>
@@ -82,7 +82,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QDoubleSpinBox" name="maxValue">
+        <widget class="QDoubleSpinBox" name="firstBound">
          <property name="decimals">
           <number>3</number>
          </property>

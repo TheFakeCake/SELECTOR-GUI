@@ -31,7 +31,8 @@ SOURCES += main.cpp\
     models/ABCInterval.cpp \
     gui/ABCIntervalDoubleWidget.cpp \
     gui/ABCIntervalIntWidget.cpp \
-    gui/VaryingABCIntervalIntWidget.cpp
+    gui/VaryingABCIntervalIntWidget.cpp \
+    gui/VaryingABCIntervalDoubleWidget.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -51,7 +52,8 @@ HEADERS  += mainwindow.h \
     models/ABCInterval.h \
     gui/ABCIntervalDoubleWidget.h \
     gui/ABCIntervalIntWidget.h \
-    gui/VaryingABCIntervalIntWidget.h
+    gui/VaryingABCIntervalIntWidget.h \
+    gui/VaryingABCIntervalDoubleWidget.h
 
 FORMS    += mainwindow.ui \
     gui/DemesParamWidget.ui \

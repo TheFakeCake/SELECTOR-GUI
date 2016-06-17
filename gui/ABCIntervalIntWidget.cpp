@@ -27,6 +27,7 @@ ABCInterval<int> ABCIntervalIntWidget::value() const
     return ABCInterval<int>(ui->singleValue->value());
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalIntWidget::setMinimumValue(int min)
 {
     ui->singleValue->setMinimum(min);
@@ -34,6 +35,7 @@ void ABCIntervalIntWidget::setMinimumValue(int min)
     ui->secondBound->setMinimum(min);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalIntWidget::setMaximumValue(int max)
 {
     ui->singleValue->setMaximum(max);
@@ -41,6 +43,7 @@ void ABCIntervalIntWidget::setMaximumValue(int max)
     ui->secondBound->setMaximum(max);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalIntWidget::blockSignals(bool b)
 {
     ui->ABC->blockSignals(b);
@@ -126,24 +129,27 @@ void ABCIntervalIntWidget::on_ABC_toggled(bool checked)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-void ABCIntervalIntWidget::on_singleValue_valueChanged(int arg1)
+void ABCIntervalIntWidget::on_singleValue_valueChanged(int value)
 {
-    emit singleValueChanged(arg1);
+    emit singleValueChanged(value);
     emit valueChanged(this->value());
 }
 
-void ABCIntervalIntWidget::on_firstBound_valueChanged(int arg1)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void ABCIntervalIntWidget::on_firstBound_valueChanged(int value)
 {
-    emit firstBoundChanged(arg1);
+    emit firstBoundChanged(value);
     emit valueChanged(this->value());
 }
 
-void ABCIntervalIntWidget::on_secondBound_valueChanged(int arg1)
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void ABCIntervalIntWidget::on_secondBound_valueChanged(int value)
 {
-    emit secondBoundChanged(arg1);
+    emit secondBoundChanged(value);
     emit valueChanged(this->value());
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalIntWidget::on_distribution_currentIndexChanged(int index)
 {
     emit distributionChanged(index);

@@ -38,9 +38,9 @@ signals:
 protected slots:
 
     void on_ABC_toggled(bool checked);
-    void on_singleValue_valueChanged(int arg1);
-    void on_firstBound_valueChanged(int arg1);
-    void on_secondBound_valueChanged(int arg1);
+    void on_singleValue_valueChanged(int value);
+    void on_firstBound_valueChanged(int value);
+    void on_secondBound_valueChanged(int value);
     void on_distribution_currentIndexChanged(int index);
 
 protected:
