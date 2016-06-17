@@ -21,7 +21,6 @@ public:
 
     void setMinimumValue(int min);
     void setMaximumValue(int max);
-    void setSpecialValueText(const QString &text);
     void blockSignals(bool b);
 
 public slots:
@@ -32,19 +31,19 @@ signals:
 
     void valueChanged(ABCInterval<int> newValue);
     void singleValueChanged(int newValue);
-    void maximumChanged(int newMax);
-    void minimumChanged(int newMin);
+    void firstBoundChanged(int newFirstBound);
+    void secondBoundChanged(int newLastBound);
     void distributionChanged(int newDistribution);
 
-private slots:
+protected slots:
 
     void on_ABC_toggled(bool checked);
     void on_singleValue_valueChanged(int arg1);
-    void on_minValue_valueChanged(int arg1);
-    void on_maxValue_valueChanged(int arg1);
+    void on_firstBound_valueChanged(int arg1);
+    void on_secondBound_valueChanged(int arg1);
     void on_distribution_currentIndexChanged(int index);
 
-private:
+protected:
 
     Ui::ABCIntervalIntWidget *ui;
 };

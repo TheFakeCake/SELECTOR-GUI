@@ -20,8 +20,8 @@ ABCInterval<int> ABCIntervalIntWidget::value() const
 {
     if (ui->ABC->isChecked())
     {
-        return ABCInterval<int>(ui->minValue->value(),
-                                ui->maxValue->value(),
+        return ABCInterval<int>(ui->firstBound->value(),
+                                ui->secondBound->value(),
                                 (ABCInterval<int>::Distribution)ui->distribution->currentIndex());
     }
     return ABCInterval<int>(ui->singleValue->value());
@@ -30,29 +30,22 @@ ABCInterval<int> ABCIntervalIntWidget::value() const
 void ABCIntervalIntWidget::setMinimumValue(int min)
 {
     ui->singleValue->setMinimum(min);
-    ui->minValue->setMinimum(min);
-    ui->maxValue->setMinimum(min);
+    ui->firstBound->setMinimum(min);
+    ui->secondBound->setMinimum(min);
 }
 
 void ABCIntervalIntWidget::setMaximumValue(int max)
 {
     ui->singleValue->setMaximum(max);
-    ui->minValue->setMaximum(max);
-    ui->maxValue->setMaximum(max);
-}
-
-void ABCIntervalIntWidget::setSpecialValueText(const QString &text)
-{
-    ui->singleValue->setSpecialValueText(text);
-    ui->minValue->setSpecialValueText(text);
-    ui->maxValue->setSpecialValueText(text);
+    ui->firstBound->setMaximum(max);
+    ui->secondBound->setMaximum(max);
 }
 
 void ABCIntervalIntWidget::blockSignals(bool b)
 {
     ui->ABC->blockSignals(b);
-    ui->minValue->blockSignals(b);
-    ui->maxValue->blockSignals(b);
+    ui->firstBound->blockSignals(b);
+    ui->secondBound->blockSignals(b);
     ui->singleValue->blockSignals(b);
     ui->distribution->blockSignals(b);
     QWidget::blockSignals(b);
@@ -70,14 +63,14 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
         {
             ui->ABC->setChecked(false);
             ui->stackedWidget->setCurrentWidget(ui->singleValuePage);
-            ui->singleValue->setValue(value.maximum());
+            ui->singleValue->setValue(value.firstBound());
         }
         else
         {
             ui->ABC->setChecked(true);
             ui->stackedWidget->setCurrentWidget(ui->intervalPage);
-            ui->minValue->setValue(value.minimum());
-            ui->maxValue->setValue(value.maximum());
+            ui->firstBound->setValue(value.firstBound());
+            ui->secondBound->setValue(value.secondBound());
         }
         blockSignals(false);
 
@@ -90,13 +83,13 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
         }
         else
         {
-            if (newValue.minimum() != oldValue.minimum())
+            if (newValue.firstBound() != oldValue.firstBound())
             {
-                emit minimumChanged(newValue.minimum());
+                emit firstBoundChanged(newValue.firstBound());
             }
-            if (newValue.maximum() != oldValue.maximum())
+            if (newValue.secondBound() != oldValue.secondBound())
             {
-                emit maximumChanged(newValue.maximum());
+                emit secondBoundChanged(newValue.secondBound());
             }
             if (newValue.distribution() != newValue.distribution())
             {
@@ -110,26 +103,26 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void ABCIntervalIntWidget::on_ABC_toggled(bool checked)
 {
-    blockSignals(true);
     if (checked)
     {
-        ui->minValue->setValue(ui->singleValue->value());
-        ui->maxValue->setValue(ui->singleValue->value());
+        blockSignals(true);
+        ui->firstBound->setValue(ui->singleValue->value());
+        ui->secondBound->setValue(ui->singleValue->value());
         ui->stackedWidget->setCurrentIndex(1);
+        blockSignals(false);
     }
     else
     {
-        ui->singleValue->setValue(ui->minValue->value());
+        ui->singleValue->setValue(ui->firstBound->value());
         ui->stackedWidget->setCurrentIndex(0);
 
         // Emit a valueChanged signal only if the interval wasn't a single value
-        if (ui->minValue->value() != ui->maxValue->value())
+        if (ui->firstBound->value() != ui->secondBound->value())
         {
             emit singleValueChanged(ui->singleValue->value());
             emit valueChanged(this->value());
         }
     }
-    blockSignals(false);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,31 +132,16 @@ void ABCIntervalIntWidget::on_singleValue_valueChanged(int arg1)
     emit valueChanged(this->value());
 }
 
-void ABCIntervalIntWidget::on_minValue_valueChanged(int arg1)
+void ABCIntervalIntWidget::on_firstBound_valueChanged(int arg1)
 {
-
-    if (arg1 > ui->maxValue->value())
-    {
-        ui->minValue->setValue(ui->maxValue->value());
-    }
-    else
-    {
-        emit minimumChanged(arg1);
-        emit valueChanged(this->value());
-    }
+    emit firstBoundChanged(arg1);
+    emit valueChanged(this->value());
 }
 
-void ABCIntervalIntWidget::on_maxValue_valueChanged(int arg1)
+void ABCIntervalIntWidget::on_secondBound_valueChanged(int arg1)
 {
-    if (arg1 < ui->minValue->value())
-    {
-        ui->maxValue->setValue(ui->minValue->value());
-    }
-    else
-    {
-        emit maximumChanged(arg1);
-        emit valueChanged(this->value());
-    }
+    emit secondBoundChanged(arg1);
+    emit valueChanged(this->value());
 }
 
 void ABCIntervalIntWidget::on_distribution_currentIndexChanged(int index)

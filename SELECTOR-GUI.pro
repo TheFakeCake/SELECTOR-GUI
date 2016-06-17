@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     gui/AbstractSelectTool.cpp \
     models/ABCInterval.cpp \
     gui/ABCIntervalDoubleWidget.cpp \
-    gui/ABCIntervalIntWidget.cpp
+    gui/ABCIntervalIntWidget.cpp \
+    gui/VaryingABCIntervalIntWidget.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -49,7 +50,8 @@ HEADERS  += mainwindow.h \
     gui/AbstractSelectTool.h \
     models/ABCInterval.h \
     gui/ABCIntervalDoubleWidget.h \
-    gui/ABCIntervalIntWidget.h
+    gui/ABCIntervalIntWidget.h \
+    gui/VaryingABCIntervalIntWidget.h
 
 FORMS    += mainwindow.ui \
     gui/DemesParamWidget.ui \

@@ -12,54 +12,56 @@ template<typename T> ABCInterval<T>::ABCInterval(T value) :
     setValue(value);
 }
 
-template<typename T> ABCInterval<T>::ABCInterval(T v1, T v2, Distribution distribution) :
+template<typename T> ABCInterval<T>::ABCInterval(T firstBound, T secondBound, Distribution distribution) :
     m_distribution(distribution)
 {
-    setBounds(v1, v2);
+    setBounds(firstBound, secondBound);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T> void ABCInterval<T>::setValue(T value)
 {
-    m_min = value;
-    m_max = value;
+    m_b1 = value;
+    m_b2 = value;
 }
 
-template<typename T> void ABCInterval<T>::setBounds(T b1, T b2)
+template<typename T> void ABCInterval<T>::setBounds(T firstBound, T secondBound)
 {
-    if (b1 < b2)
-    {
-        m_min = b1;
-        m_max = b2;
-    }
-    else
-    {
-        m_min = b2;
-        m_max = b1;
-    }
+    m_b1 = firstBound;
+    m_b2 = secondBound;
+}
+
+template<typename T> void ABCInterval<T>::setFirstBound(T bound)
+{
+    m_b1 = bound;
+}
+
+template<typename T> void ABCInterval<T>::setSecondBound(T bound)
+{
+    m_b2 = bound;
 }
 
 template<typename T> void ABCInterval<T>::setMinimum(T min)
 {
-    if (min > m_max)
+    if (m_b2 < m_b1)
     {
-        setValue(min);
+        m_b2 = min;
     }
     else
     {
-        m_min = min;
+        m_b1 = min;
     }
 }
 
 template<typename T> void ABCInterval<T>::setMaximum(T max)
 {
-    if (max < m_min)
+    if (m_b1 > m_b2)
     {
-        setValue(max);
+        m_b1 = max;
     }
     else
     {
-        m_max = max;
+        m_b2 = max;
     }
 }
 
@@ -69,15 +71,27 @@ void ABCInterval<T>::setDistribution(ABCInterval<T>::Distribution distribution)
     m_distribution = distribution;
 }
 
+template<typename T>
+void ABCInterval<T>::setDistribution(int distribution)
+{
+    if (distribution >= 0 && distribution <= LastDistribution)
+    {
+        m_distribution = (Distribution)distribution;
+    }
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T> bool ABCInterval<T>::operator ==(const ABCInterval<T> &other) const
 {
-    bool res = (m_min == other.m_min && m_max == other.m_max);
+    return (minimum() == other.minimum() && maximum() == other.maximum() && m_distribution == other.m_distribution);
+    /*
+    bool res = (minimum() == other.minimum() && maximum() == other.maximum());
     if (! isFixedValue())
     {
         res = (res && m_distribution == other.m_distribution);
     }
     return res;
+    */
 }
 
 template<typename T> bool ABCInterval<T>::operator !=(const ABCInterval<T> &other) const
@@ -87,7 +101,7 @@ template<typename T> bool ABCInterval<T>::operator !=(const ABCInterval<T> &othe
 
 template<typename T> bool ABCInterval<T>::operator ==(const T &val) const
 {
-    return m_max == val && m_min == val;
+    return maximum() == val && minimum() == val;
 }
 
 template<typename T> bool ABCInterval<T>::operator !=(const T &val) const
@@ -97,22 +111,22 @@ template<typename T> bool ABCInterval<T>::operator !=(const T &val) const
 
 template<typename T> bool ABCInterval<T>::operator <(const T &val) const
 {
-    return m_max < val || m_min < val;
+    return maximum() < val || minimum() < val;
 }
 
 template<typename T> bool ABCInterval<T>::operator >(const T &val) const
 {
-    return m_max > val || m_min > val;
+    return maximum() > val || minimum() > val;
 }
 
 template<typename T> bool ABCInterval<T>::operator <=(const T &val) const
 {
-    return m_max <= val || m_min <= val;
+    return maximum() <= val || minimum() <= val;
 }
 
 template<typename T> bool ABCInterval<T>::operator >=(const T &val) const
 {
-    return m_max >= val || m_min >= val;
+    return maximum() >= val || minimum() >= val;
 }
 
 template class ABCInterval<int>;

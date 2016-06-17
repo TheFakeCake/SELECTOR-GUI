@@ -65,10 +65,10 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QSpinBox" name="minValue"/>
+        <widget class="QSpinBox" name="firstBound"/>
        </item>
        <item>
-        <widget class="QSpinBox" name="maxValue"/>
+        <widget class="QSpinBox" name="secondBound"/>
        </item>
        <item>
         <widget class="QComboBox" name="distribution">
