@@ -9,6 +9,14 @@ DemesParamWidget::DemesParamWidget(MapWidget *mapWidget, QWidget *parent) :
 {
     ui->setupUi(this);
 
+    ui->initialPopulationVaryingWidget->setMinimumValue(0);
+    ui->initialPopulationVaryingWidget->setMaximumValue(99999999);
+    ui->initialPopulationVaryingWidget->init(m_mapWidget, &Deme::initialPopulation, &Deme::setInitialPopulation);
+
+    ui->carryingCapacityVaryingWidget->setMinimumValue(0);
+    ui->carryingCapacityVaryingWidget->setMaximumValue(99999999);
+    ui->carryingCapacityVaryingWidget->init(m_mapWidget, &Deme::carryingCapacity, &Deme::setCarryingCapacity);
+
     connect(m_mapWidget, SIGNAL(selectionChanged()), this, SLOT(updateView()));
 
     updateView();
@@ -90,38 +98,6 @@ void DemesParamWidget::updateView()
             continue;
         }
 
-        // Check initial population
-        if (deme->initialPopulation().isFixedValue() != !viewInitialPopulationABC)
-        {
-            viewInitialPopulationABC = false;
-        }
-        if (deme->initialPopulation().firstBound() != viewInitialPopulation.firstBound())
-        {
-            viewInitialPopulation.setFirstBound(-1);
-        }
-        if (deme->initialPopulation().secondBound() != viewInitialPopulation.secondBound())
-        {
-            viewInitialPopulation.setSecondBound(-1);
-        }
-        if (deme->initialPopulation().distribution() != viewInitialPopulation.distribution())
-        {
-            initialPopulationVaryingDistribution = true;
-        }
-
-        // Check carrying capacity
-        if (deme->carryingCapacity().isFixedValue() != !viewCarryingCapacityABC)
-        {
-            viewCarryingCapacityABC = false;
-        }
-        if (deme->carryingCapacity().minimum() != viewCarryingCapacity.minimum())
-        {
-            viewCarryingCapacity.setMinimum(-1);
-        }
-        if (deme->carryingCapacity().maximum() != viewCarryingCapacity.maximum())
-        {
-            viewCarryingCapacity.setMaximum(-1);
-        }
-
         // Check growth rate
         if (deme->growthRate().isFixedValue() != !viewGrowthRateABC)
         {
@@ -164,57 +140,10 @@ void DemesParamWidget::updateView()
     // Display the data in the views
     blockUISignals(true);
 
-    if (viewInitialPopulation.firstBound() == -1)
-    {
-        ui->initialPopulationSingleValue->setMinimum(-1);
-        ui->initialPopulationSingleValue->setSpecialValueText("Varying");
-        ui->initialPopulationMinValue->setMinimum(-1);
-        ui->initialPopulationMinValue->setSpecialValueText("Varying");
-    }
-    else
-    {
-        ui->initialPopulationSingleValue->setMinimum(0);
-        ui->initialPopulationSingleValue->setSpecialValueText("");
-        ui->initialPopulationMinValue->setMinimum(0);
-        ui->initialPopulationMinValue->setSpecialValueText("");
-    }
-    if (viewInitialPopulation.secondBound() == -1)
-    {
-        ui->initialPopulationMaxValue->setMinimum(-1);
-        ui->initialPopulationMaxValue->setSpecialValueText("Varying");
-    }
-    else
-    {
-        ui->initialPopulationMaxValue->setMinimum(0);
-        ui->initialPopulationMaxValue->setSpecialValueText("");
-    }
-
     ui->activatedCheckBox->setCheckState(viewActivatedState);
 
-
-    ui->initialPopulationDistribution->removeItem(3);
-    if (initialPopulationVaryingDistribution)
-    {
-        ui->initialPopulationDistribution->addItem("Varying");
-        ui->initialPopulationDistribution->setCurrentIndex(3);
-    }
-    else
-    {
-        ui->initialPopulationDistribution->setCurrentIndex(viewInitialPopulation.distribution());
-    }
-    ui->initialPopulationSingleValue->setValue(viewInitialPopulation.firstBound());
-    ui->initialPopulationMinValue->setValue(viewInitialPopulation.firstBound());
-    ui->initialPopulationMaxValue->setValue(viewInitialPopulation.secondBound());
-    ui->initialPopulationCheckbox->setChecked(viewInitialPopulationABC);
-    /* /!\ */
-    ui->initialPopulationStackedWidget->setCurrentIndex(viewInitialPopulationABC ? 1 : 0);
-    /* /!\ */
-
-    ui->carryingCapacitySingleValue->setValue(viewCarryingCapacity.minimum());
-    ui->carryingCapacityMinValue->setValue(viewCarryingCapacity.minimum());
-    ui->carryingCapacityMaxValue->setValue(viewCarryingCapacity.maximum());
-    ui->carryingCapacityCheckbox->setChecked(viewCarryingCapacityABC);
-    ui->carryingCapacityStackedWidget->setCurrentIndex(viewCarryingCapacityABC ? 1 : 0);
+    ui->initialPopulationVaryingWidget->updateView();
+    ui->carryingCapacityVaryingWidget->updateView();
 
     ui->growthRateSingleValue->setValue(viewGrowthRate.minimum());
     ui->growthRateMinValue->setValue(viewGrowthRate.minimum());
@@ -253,6 +182,7 @@ void DemesParamWidget::updateView()
     // TODO : Check if group must be 1 to ....
 }
 
+/*
 void DemesParamWidget::updateInitialPopulationView()
 {
     QList<QPoint> selection = m_mapWidget->selection();
@@ -355,7 +285,7 @@ void DemesParamWidget::updateInitialPopulationView()
 
     blockUISignals(false);
 }
-
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void DemesParamWidget::on_activatedCheckBox_clicked()
 {
@@ -383,11 +313,9 @@ void DemesParamWidget::on_activatedCheckBox_stateChanged(int state)
     // Enabled / disables the widgets if the "Active" checkbox is checked / unchecked
     bool b = (state != Qt::Unchecked);
     ui->initialPopulationLabel->setEnabled(b);
-    ui->initialPopulationStackedWidget->setEnabled(b);
-    ui->initialPopulationCheckbox->setEnabled(b);
+    ui->initialPopulationVaryingWidget->setEnabled(b);
     ui->carryingCapacityLabel->setEnabled(b);
-    ui->carryingCapacityStackedWidget->setEnabled(b);
-    ui->carryingCapacityCheckbox->setEnabled(b);
+    ui->carryingCapacityVaryingWidget->setEnabled(b);
     ui->growthRateLabel->setEnabled(b);
     ui->growthRateStackedWidget->setEnabled(b);
     ui->growthRateCheckbox->setEnabled(b);
@@ -685,6 +613,7 @@ void DemesParamWidget::on_groupComboBox_currentTextChanged(const QString &text)
     updateView();
 }
 
+/*
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void DemesParamWidget::on_initialPopulationCheckbox_toggled(bool checked)
 {
@@ -782,10 +711,11 @@ void DemesParamWidget::setIntervalValueToSelection(ValueType value, ValueType va
     }
     m_mapWidget->setPreventUpdates(false);
 }
-
+*/
 
 void DemesParamWidget::blockUISignals(bool b)
 {
+    /*
     ui->initialPopulationCheckbox->blockSignals(b);
     ui->initialPopulationDistribution->blockSignals(b);
     ui->initialPopulationMaxValue->blockSignals(b);
@@ -797,7 +727,7 @@ void DemesParamWidget::blockUISignals(bool b)
     ui->carryingCapacityMaxValue->blockSignals(b);
     ui->carryingCapacityMinValue->blockSignals(b);
     ui->carryingCapacitySingleValue->blockSignals(b);
-
+    */
     ui->growthRateCheckbox->blockSignals(b);
     ui->growthRateDistribution->blockSignals(b);
     ui->growthRateMaxValue->blockSignals(b);
