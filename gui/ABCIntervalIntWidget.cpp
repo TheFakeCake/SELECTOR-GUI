@@ -74,6 +74,7 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
             ui->stackedWidget->setCurrentWidget(ui->intervalPage);
             ui->firstBound->setValue(value.firstBound());
             ui->secondBound->setValue(value.secondBound());
+            ui->distribution->setCurrentIndex(value.distribution());
         }
         blockSignals(false);
 
