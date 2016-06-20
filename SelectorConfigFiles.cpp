@@ -55,11 +55,14 @@ const QString SELECTOR_STRUCTURE_1_REGEX[] {
 /*03+*/ "(?:("+INT+")|"+INTERVAL_INT+")"+SPACE+"+(?:("+INT+"|-1)|"+INTERVAL_INT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+SPACE+"+("+INT+")"+SPACE+"+("+INT+")"+LINE_END
 };
 
-//TODO : INTERVAL DANS STRUCTURE
-
 const QString SELECTOR_STRUCTURE_N_REGEX[] {
 /*01*/  LINE_END,
 /*02*/  "(abs|rel)"+SPACE+"+(abs|rel)"+SPACE+"+(abs|rel)"+LINE_END,
+};
+
+const QString SELECTOR_ALLDEMES_REGEX[] {
+/*01*/  LINE_END,
+/*02*/  "(?:("+INT+"|-1)|"+INTERVAL_INT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -180,6 +183,7 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         emit error(msg);
         return false;
     }
+    in.seek(0);
 
     // Read selector_structure_1.txt
     in.readLine(); // Ignore the first 2 comment lines
@@ -213,6 +217,7 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
                 }
                 else
                 {
+                    sim->map()->deme(x, y )->enable(true);
                     sim->map()->deme(x, y)->setCarryingCapacity(toInterval<int>(regex.cap(5), regex.cap(6), regex.cap(7), regex.cap(8)));
                 }
                 sim->map()->deme(x, y)->setGrowthRate(toInterval<double>(regex.cap(9), regex.cap(10), regex.cap(11), regex.cap(12)));
@@ -254,7 +259,189 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 void SelectorConfigFiles::_readAllDemesFiles(SimulationModel *sim)
 {
+    std::list<int> modificationGenerations = sim->map()->modificationGenerations();
+    MapStructureModifier *modif;
+    QFile file;
+    QTextStream in(&file);
+    QRegExp regex;
+    std::map<int, std::vector<Deme*> > groups = sim->map()->groups();
 
+    // Open selector_alldemes_1.txt file
+    file.setFileName(m_directory + "/" + QString(SELECTOR_ALLDEMES_FILE).arg(1));
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QString msg = QString("Failed to open %1.").arg(file.fileName());
+        m_errorMessages << msg;
+        emit error(msg);
+        return;
+    }
+
+    int lineCount = 2;
+
+    // Ignore first line
+    in.readLine();
+
+    regex.setPattern(SELECTOR_ALLDEMES_REGEX[1]);
+
+    for (auto groupIt = groups.begin(); groupIt != groups.end(); groupIt++, lineCount++)
+    {
+        // Check if end of files is prematurely reached
+        if (in.atEnd())
+        {
+            QString msg = QString("Reached the end of file %1. Incomplete configuration.").arg(QString(SELECTOR_ALLDEMES_FILE).arg(1));
+            m_errorMessages << msg;
+            emit warning(msg);
+            break;
+        }
+        // Check line format and retrieve data from it
+        if (regex.exactMatch(in.readLine().trimmed()))
+        {
+            for (auto demeIt = groupIt->second.begin(); demeIt != groupIt->second.end(); demeIt++)
+            {
+                if (regex.cap(1) == "-1")
+                {
+                    (*demeIt)->enable(false);
+                    continue;
+                }
+                else
+                {
+                    (*demeIt)->setCarryingCapacity(toInterval<int>(regex.cap(1), regex.cap(2), regex.cap(3), regex.cap(4)));
+                    (*demeIt)->setGrowthRate(toInterval<double>(regex.cap(5), regex.cap(6), regex.cap(7), regex.cap(8)));
+                    (*demeIt)->setMigrationRate(toInterval<double>(regex.cap(9), regex.cap(10), regex.cap(11), regex.cap(12)));
+                }
+            }
+        }
+        else
+        {
+            QString msg = QString("Error on line %1 of file %2. Line ignored.").arg(lineCount)
+                                 .arg(QString(SELECTOR_ALLDEMES_FILE).arg(1));
+            m_errorMessages << msg;
+            emit warning(msg);
+        }
+    }
+    file.close();
+
+    // Reads the selector_alldemes_X.txt files
+    int i = 2;
+    for (auto it = modificationGenerations.begin(); it != modificationGenerations.end(); it++, i++)
+    {
+        // Open selector_alldemes_X.txt file
+        file.setFileName(m_directory + "/" + QString(SELECTOR_ALLDEMES_FILE).arg(i));
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            QString msg = QString("Failed to open %1.").arg(file.fileName());
+            m_errorMessages << msg;
+            emit error(msg);
+            continue;
+        }
+        in.seek(0);
+
+        modif = sim->map()->modification(*it);
+
+        // Ignore first line (comments)
+        in.readLine();
+
+        // Check format of line 2
+        regex.setPattern(SELECTOR_STRUCTURE_N_REGEX[1]);
+        if (!regex.exactMatch(in.readLine().trimmed()))
+        {
+            QString msg = QString("Error on line 2 of file %1. Line ignored.").arg(QString(SELECTOR_ALLDEMES_FILE).arg(i));
+            m_errorMessages << msg;
+            emit warning(msg);
+            file.close();
+            continue;
+        }
+
+        // Analyse line 2 to set modification modes and create the regex for the next data lines
+        QString dataRegex;
+
+        if (regex.cap(1) == "rel")
+        {
+            modif->setCarryingCapacityMode(MapStructureModifier::Relative);
+            dataRegex = "("+FLOAT+"|-1)"+SPACE+"+";
+        }
+        else
+        {
+            modif->setCarryingCapacityMode(MapStructureModifier::Absolute);
+            dataRegex = "("+INT+"|-1)"+SPACE+"+";
+        }
+
+        if (regex.cap(2) == "rel")
+        {
+            modif->setGrowthRateMode(MapStructureModifier::Relative);
+            dataRegex += "("+FLOAT+"|-1)"+SPACE+"+";
+        }
+        else
+        {
+            modif->setGrowthRateMode(MapStructureModifier::Absolute);
+            dataRegex += "("+FLOAT+"|-1)"+SPACE+"+";
+        }
+
+        if (regex.cap(3) == "rel")
+        {
+            modif->setMigrationRateMode(MapStructureModifier::Relative);
+            dataRegex += "("+FLOAT+"|-1)"+LINE_END;
+        }
+        else
+        {
+            modif->setMigrationRateMode(MapStructureModifier::Absolute);
+            dataRegex += "("+FLOAT+"|-1)"+LINE_END;
+        }
+
+        regex.setPattern(dataRegex);
+
+        // Read data lines
+        lineCount = 2;
+        for (auto groupIt = groups.begin(); groupIt != groups.end(); groupIt++, lineCount++)
+        {
+            if (! regex.exactMatch(in.readLine().trimmed()))
+            {
+                QString msg = QString("Error on line %1 of file %2. Line ignored").arg(lineCount)
+                                     .arg(QString(SELECTOR_ALLDEMES_FILE).arg(i));
+                m_errorMessages << msg;
+                emit warning(msg);
+                continue;
+            }
+            for (auto demeIt = groupIt->second.begin(); demeIt != groupIt->second.end(); demeIt++)
+            {
+                if (regex.cap(1) != "-1")
+                {
+                    if (modif->carryingCapacityMode() == MapStructureModifier::Relative)
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setRelCarryingCapacity(regex.cap(1).toDouble());
+                    }
+                    else
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setAbsCarryingCapacity(regex.cap(1).toInt());
+                    }
+                }
+                if (regex.cap(2) != "-1")
+                {
+                    if (modif->growthRateMode() == MapStructureModifier::Relative)
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setRelGrowthRate(regex.cap(2).toDouble());
+                    }
+                    else
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setAbsGrowthRate(regex.cap(2).toDouble());
+                    }
+                }
+                if (regex.cap(3) != "-1")
+                {
+                    if (modif->growthRateMode() == MapStructureModifier::Relative)
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setRelMigrationRate(regex.cap(3).toDouble());
+                    }
+                    else
+                    {
+                        modif->deme((*demeIt)->x(), (*demeIt)->y())->setAbsMigrationRate(regex.cap(3).toDouble());
+                    }
+                }
+            }
+        }
+
+        file.close();
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -276,8 +463,9 @@ void SelectorConfigFiles::_readStructureFiles(SimulationModel *sim)
             QString msg = QString("Failed to open %1.").arg(file.fileName());
             m_errorMessages << msg;
             emit error(msg);
-            return;
+            continue;
         }
+        in.seek(0);
 
         modif = sim->map()->modification(*it);
 
