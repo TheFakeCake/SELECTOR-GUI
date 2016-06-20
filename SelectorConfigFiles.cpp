@@ -9,29 +9,32 @@ const QString SelectorConfigFiles::SELECTOR_STRUCTURE_FILE   = QString("selector
 const QString SelectorConfigFiles::SELECTOR_ALLDEMES_FILE    = QString("selector_alldemes_%1.txt");
 const QString SelectorConfigFiles::DISTRIBUTIONS[] = { "UNIFORM", "LOG_UNIFORM", "UNIFORM_DISCRETE" };
 
-const QString SPACE     = QString("[ \\t]");
-const QString COMMENT   = QString("(?:\\/\\/[^\\n]*)");
-const QString INT       = QString("(?:[0-9]+)");
-const QString FLOAT     = QString("(?:[0-9]+(?:\\.[0-9]+)?)");
-const QString ROUTE     = QString("(?:\\(("+INT+"),("+INT+"),("+FLOAT+")\\))");
-const QString LINE_END  = SPACE+"*"+COMMENT+"?";
+const QString SPACE         = QString("[ \\t]");
+const QString COMMENT       = QString("(?:\\/\\/[^\\n]*)");
+const QString INT           = QString("(?:[0-9]+)");
+const QString FLOAT         = QString("(?:[0-9]+(?:\\.[0-9]+)?)");
+const QString DISTRIBUTION  = QString("(?:UNIFORM|LOG_UNIFORM|UNIFORM_DISCRETE)");
+const QString INTERVAL_INT  = QString("\\(\\*("+DISTRIBUTION+")\\/("+INT+")\\/("+INT+")\\)");
+const QString INTERVAL_FLOAT= QString("\\(\\*("+DISTRIBUTION+")\\/("+FLOAT+")\\/("+FLOAT+")\\)");
+const QString ROUTE         = QString("(?:\\(("+INT+"),("+INT+"),("+FLOAT+")\\))");
+const QString LINE_END      = SPACE+"*"+COMMENT+"?";
 
 const int SELECTOR_PARAM_NB_LINES = 25;
 const QString SELECTOR_PARAM_REGEX[] = {
 /*01*/  LINE_END,
 /*02*/  "("+INT+")"+LINE_END,
-/*03*/  "("+INT+")"+LINE_END,
+/*03*/  "(?:("+INT+")|"+INTERVAL_INT+")"+LINE_END,
 /*04*/  LINE_END,
-/*05*/  "("+INT+")"+LINE_END,
+/*05*/  "(?:("+INT+")|"+INTERVAL_INT+")"+LINE_END,
 /*06*/  "("+INT+")"+LINE_END,
-/*07*/  "("+FLOAT+")"+LINE_END,
-/*08*/  "("+FLOAT+")"+LINE_END,
+/*07*/  "(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
+/*08*/  "(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
 /*09*/  LINE_END,
 /*10*/  "("+INT+")"+LINE_END,
 /*11*/  "("+INT+")"+LINE_END,
-/*12*/  "("+FLOAT+")"+LINE_END,
-/*13*/  "("+FLOAT+")"+LINE_END,
-/*14*/  "("+FLOAT+")"+LINE_END,
+/*12*/  "(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
+/*13*/  "(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
+/*14*/  "(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+LINE_END,
 /*15*/  LINE_END,
 /*16*/  "("+INT+")"+LINE_END,
 /*17*/  LINE_END,
@@ -49,8 +52,10 @@ const QString SELECTOR_PARAM_REGEX[] = {
 const QString SELECTOR_STRUCTURE_1_REGEX[] {
 /*01*/  LINE_END,
 /*02*/  LINE_END,
-/*03+*/ "("+INT+")"+SPACE+"+("+INT+"|-1)"+SPACE+"+("+FLOAT+")"+SPACE+"+("+FLOAT+")"+SPACE+"+("+INT+")"+SPACE+"+("+INT+")"+LINE_END
+/*03+*/ "(?:("+INT+")|"+INTERVAL_INT+")"+SPACE+"+(?:("+INT+"|-1)|"+INTERVAL_INT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+SPACE+"+(?:("+FLOAT+")|"+INTERVAL_FLOAT+")"+SPACE+"+("+INT+")"+SPACE+"+("+INT+")"+LINE_END
 };
+
+//TODO : INTERVAL DANS STRUCTURE
 
 const QString SELECTOR_STRUCTURE_N_REGEX[] {
 /*01*/  LINE_END,
@@ -127,8 +132,9 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
         }
 
         regex.setPattern(SELECTOR_PARAM_REGEX[i]);
+        QString line = in.readLine().trimmed();
 
-        if (regex.exactMatch(in.readLine().trimmed()))
+        if (regex.exactMatch(line))
         {
             _handleParamLine(sim, i, &regex, groupedDemes, nbRoutes, nbStructures);
         }
@@ -200,19 +206,19 @@ bool SelectorConfigFiles::read(SimulationModel *sim)
             if (regex.exactMatch(in.readLine().trimmed()))
             {
                 // Set deme parameters
-                sim->map()->deme(x, y)->setInitialPopulation(regex.cap(1).toInt());
-                if (regex.cap(2).toInt() == -1)
+                sim->map()->deme(x, y)->setInitialPopulation(toInterval<int>(regex.cap(1), regex.cap(2), regex.cap(3), regex.cap(4)));
+                if (regex.cap(5) == "-1")
                 {
                     sim->map()->deme(x, y)->enable(false);
                 }
                 else
                 {
-                    sim->map()->deme(x, y)->setCarryingCapacity(regex.cap(2).toInt());
+                    sim->map()->deme(x, y)->setCarryingCapacity(toInterval<int>(regex.cap(5), regex.cap(6), regex.cap(7), regex.cap(8)));
                 }
-                sim->map()->deme(x, y)->setGrowthRate(regex.cap(3).toDouble());
-                sim->map()->deme(x, y)->setMigrationRate(regex.cap(4).toDouble());
-                sim->map()->deme(x, y)->setGroup(regex.cap(5).toInt());
-                sim->map()->deme(x, y)->setSampleSize(regex.cap(6).toInt());
+                sim->map()->deme(x, y)->setGrowthRate(toInterval<double>(regex.cap(9), regex.cap(10), regex.cap(11), regex.cap(12)));
+                sim->map()->deme(x, y)->setMigrationRate(toInterval<double>(regex.cap(13), regex.cap(14), regex.cap(15), regex.cap(16)));
+                sim->map()->deme(x, y)->setGroup(regex.cap(17).toInt());
+                sim->map()->deme(x, y)->setSampleSize(regex.cap(18).toInt());
             }
             else
             {
@@ -568,12 +574,12 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, int line, QRegE
     {
     case 0: break;
     case 1: sim->setNbSimulations(regex->cap(1).toInt()); break;
-    case 2: sim->setNbGenerations(regex->cap(1).toInt()); break;
+    case 2: sim->setNbGenerations(toInterval<int>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
     case 3: break;
-    case 4: sim->setInitialAllelePoolSize(regex->cap(1).toInt()); break;
+    case 4: sim->setInitialAllelePoolSize(toInterval<int>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
     case 5: sim->setUniqueAllelePool(! regex->cap(1).toInt()); break;
-    case 6: sim->setFirstAlleleFrequency(regex->cap(1).toInt()); break;
-    case 7: sim->setMutationRate(regex->cap(1).toDouble()); break;
+    case 6: sim->setFirstAlleleFrequency(toInterval<double>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
+    case 7: sim->setMutationRate(toInterval<double>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
     case 8: break;
     case 9:
         switch (regex->cap(1).toInt())
@@ -591,9 +597,9 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, int line, QRegE
         default: sim->selection()->setHeterogeneity(Selection::Uniform); break;
         }
         break;
-    case 11: sim->selection()->setUniformCoefficient(regex->cap(1).toInt()); break;
-    case 12: sim->selection()->setNorthEastCoefficient(regex->cap(1).toDouble()); break;
-    case 13: sim->selection()->setSouthWestCoefficient(regex->cap(1).toDouble()); break;
+    case 11: sim->selection()->setUniformCoefficient(toInterval<double>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
+    case 12: sim->selection()->setNorthEastCoefficient(toInterval<double>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
+    case 13: sim->selection()->setSouthWestCoefficient(toInterval<double>(regex->cap(1), regex->cap(2), regex->cap(3), regex->cap(4))); break;
     case 14: break;
     case 15: sim->setOutputCompleteHistory(regex->cap(1).toInt()); break;
     case 16: break;
@@ -624,4 +630,34 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, int line, QRegE
     case 24: break;
     default: break;
     }
+}
+
+template<typename T>
+ABCInterval<T> SelectorConfigFiles::toInterval(const QString &singleValueCap, const QString &distributionCap,
+                                               const QString &firstBoundCap, const QString &secondBoundCap)
+{
+    ABCInterval<T> interval;
+
+    if (! singleValueCap.isEmpty())
+    {
+        interval.setValue(singleValueCap.toDouble());
+    }
+    else
+    {
+        if (distributionCap == "UNIFORM")
+        {
+            interval.setDistribution(ABCInterval<T>::Uniform);
+        }
+        else if (distributionCap == "LOG_UNIFORM")
+        {
+            interval.setDistribution(ABCInterval<T>::LogUniform);
+        }
+        else if (distributionCap == "UNIFORM_DISCRETE")
+        {
+            interval.setDistribution(ABCInterval<T>::UniformDiscrete);
+        }
+        interval.setFirstBound(firstBoundCap.toDouble());
+        interval.setSecondBound(secondBoundCap.toDouble());
+    }
+    return interval;
 }

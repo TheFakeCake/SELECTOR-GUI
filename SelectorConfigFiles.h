@@ -38,6 +38,10 @@ private:
     static const QString SELECTOR_ALLDEMES_FILE;
     static const QString DISTRIBUTIONS[];
 
+    template<typename T>
+    static ABCInterval<T> toInterval(const QString &singleValueCap, const QString &distributionCap,
+                                     const QString &firstBoundCap, const QString &secondBoundCap);
+
     void _handleParamLine(SimulationModel *sim, int line, QRegExp *regex,
                           bool &groupedDemes, int &nbRoutes, int &nbStructures);
     void _readAllDemesFiles(SimulationModel *sim);
