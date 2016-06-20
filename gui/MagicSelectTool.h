@@ -19,6 +19,7 @@ private:
 
     template<typename T>
     bool selectDemes(T value, T (Deme::*methodPtr)() const);
+    bool selectInactiveDemes();
 };
 
 #endif // MAGICSELECTTOOL_H

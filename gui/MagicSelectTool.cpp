@@ -19,6 +19,12 @@ bool MagicSelectTool::handleMousePress(QMouseEvent *event)
         return true;
     }
 
+    // If the deme is inactive, select all the inactive demes
+    if (!deme->isEnabled())
+    {
+        return selectInactiveDemes();
+    }
+
     // Select all the deme sharing the same value that is being displayed
     switch (m_mapWidget->displayMode())
     {
@@ -51,6 +57,26 @@ bool MagicSelectTool::handleMouseRelease(QMouseEvent *event)
     return false;
 }
 
+bool MagicSelectTool::selectInactiveDemes()
+{
+    Map *map = m_mapWidget->map();
+    QList<QPoint> &selection = m_mapWidget->selection();
+
+    // Check each deme in the map ...
+    for (int y = 0; y < map->height(); y++)
+    {
+        for (int x = 0; x < map->width(); x++)
+        {
+            // ... and select those that are disabled
+            if (!map->deme(x, y)->isEnabled())
+            {
+                selection << QPoint(x, y);
+            }
+        }
+    }
+    return true;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 template<typename T>
 bool MagicSelectTool::selectDemes(T value, T (Deme::*methodPtr)() const)
@@ -58,13 +84,15 @@ bool MagicSelectTool::selectDemes(T value, T (Deme::*methodPtr)() const)
     Map *map = m_mapWidget->map();
     QList<QPoint> &selection = m_mapWidget->selection();
 
-    // Check the value of each deme in the map ...
+    // Check each deme in the map ...
     for (int y = 0; y < map->height(); y++)
     {
         for (int x = 0; x < map->width(); x++)
         {
-            // ... if the deme is active and its value is the same, the deme is added to the selection
-            if (map->deme(x, y)->isEnabled() && (map->deme(x, y)->*methodPtr)() == value)
+            Deme *deme = map->deme(x, y);
+
+            // ... and select those that are enabled and have the same value
+            if (deme->isEnabled() && (deme->*methodPtr)() == value)
             {
                 selection << QPoint(x, y);
             }
