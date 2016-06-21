@@ -18,10 +18,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Add the demes parameter widget
     m_demesParamWidget = new DemesParamWidget(m_mapWidget);
-    ((QVBoxLayout*)ui->demesParamFrame->layout())->insertWidget(0, m_demesParamWidget);
+    ui->demesParamTab->layout()->addWidget(m_demesParamWidget);
 
     // General UI configuration
     ui->firstAlleleFrequencyABC->layout()->setContentsMargins(25, 0, 0, 0);
+    ui->splitter->setCollapsible(0, false);
+    ui->splitter->setSizes(QList<int>() << 1 << 0);
 
     // ABCIntervalWidgets configuration
     ui->numberOfGenerationsABC->setMinimumValue(1);

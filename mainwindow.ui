@@ -6,655 +6,648 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1067</width>
-    <height>994</height>
+    <width>1181</width>
+    <height>779</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>SELECTOR-GUI</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1">
-    <property name="sizeConstraint">
-     <enum>QLayout::SetDefaultConstraint</enum>
-    </property>
-    <item row="1" column="0" colspan="2">
-     <widget class="LogWidget" name="logWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+   <layout class="QVBoxLayout" name="verticalLayout_8">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <property name="readOnly">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="currentIndex">
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="settingsTab">
-       <attribute name="title">
-        <string>Settings</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
+      <widget class="QWidget" name="horizontalLayoutWidget_2">
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QGroupBox" name="generalGroupBox">
+         <widget class="QTabWidget" name="tabWidget">
           <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+           <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
-          <property name="title">
-           <string>General</string>
+          <property name="currentIndex">
+           <number>0</number>
           </property>
-          <layout class="QGridLayout" name="gridLayout_2">
-           <item row="1" column="0">
-            <widget class="QLabel" name="numberOfGenerationsLabel">
-             <property name="text">
-              <string>Number of generations :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="numberOfSimulationsLabel">
-             <property name="text">
-              <string>Number of simulations :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="numberOfSimulationsSpinBox">
-             <property name="keyboardTracking">
-              <bool>false</bool>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>999999999</number>
-             </property>
-            </widget>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="ABCIntervalIntWidget" name="numberOfGenerationsABC" native="true"/>
-           </item>
-          </layout>
+          <widget class="QWidget" name="settingsTab">
+           <property name="styleSheet">
+            <string notr="true">QScrollArea { background: transparent; }
+#settingsScrollAreaWidgetContents { background: transparent; }</string>
+           </property>
+           <attribute name="title">
+            <string>Settings</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QScrollArea" name="settingsScrollArea">
+              <property name="frameShape">
+               <enum>QFrame::NoFrame</enum>
+              </property>
+              <property name="horizontalScrollBarPolicy">
+               <enum>Qt::ScrollBarAlwaysOff</enum>
+              </property>
+              <property name="widgetResizable">
+               <bool>true</bool>
+              </property>
+              <widget class="QWidget" name="settingsScrollAreaWidgetContents">
+               <property name="geometry">
+                <rect>
+                 <x>0</x>
+                 <y>-164</y>
+                 <width>335</width>
+                 <height>658</height>
+                </rect>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_7">
+                <item>
+                 <widget class="QGroupBox" name="generalGroupBox">
+                  <property name="title">
+                   <string>General</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_2">
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="numberOfGenerationsLabel">
+                     <property name="text">
+                      <string>Number of generations :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="numberOfSimulationsLabel">
+                     <property name="text">
+                      <string>Number of simulations :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QSpinBox" name="numberOfSimulationsSpinBox">
+                     <property name="keyboardTracking">
+                      <bool>false</bool>
+                     </property>
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="2" column="0" colspan="2">
+                    <widget class="ABCIntervalIntWidget" name="numberOfGenerationsABC" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="geneticsGroupBox">
+                  <property name="title">
+                   <string>Genetics</string>
+                  </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_3">
+                   <item>
+                    <widget class="QWidget" name="widget" native="true">
+                     <layout class="QHBoxLayout" name="horizontalLayout_2">
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <widget class="QRadioButton" name="uniquePoolRadioButton">
+                        <property name="toolTip">
+                         <string>All initial population sources are constituted from one single gene pool</string>
+                        </property>
+                        <property name="text">
+                         <string>Unique allele pool</string>
+                        </property>
+                        <property name="checked">
+                         <bool>true</bool>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QRadioButton" name="multiplePoolRadioButton">
+                        <property name="toolTip">
+                         <string>Each initial population group is derived from independent ancestral gene pools</string>
+                        </property>
+                        <property name="text">
+                         <string>Multiple allele pools</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="numberOfInitialAllelesLabel">
+                     <property name="text">
+                      <string>Number of initial alleles :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="ABCIntervalIntWidget" name="initialAllelePoolSizeABC" native="true"/>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="mutationRateLabel">
+                     <property name="toolTip">
+                      <string>Defines the probability that new alleles appear (mutation rate per individual per generation)</string>
+                     </property>
+                     <property name="text">
+                      <string>Mutation rate :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="ABCIntervalDoubleWidget" name="mutationRateABC" native="true"/>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="initialFrequencyCheckBox">
+                     <property name="text">
+                      <string>Set initial frequency of first allele (a1)</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="ABCIntervalDoubleWidget" name="firstAlleleFrequencyABC" native="true">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="selectionGroupBox">
+                  <property name="title">
+                   <string>Selection</string>
+                  </property>
+                  <layout class="QGridLayout" name="gridLayout_3">
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="heterogeneityLabel">
+                     <property name="text">
+                      <string>Heterogeneity :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="selectionModelComboBox">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>SOS</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>FDS</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>DPS</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                   <item row="2" column="0" colspan="2">
+                    <widget class="QStackedWidget" name="coefficientStackedWidget">
+                     <property name="currentIndex">
+                      <number>0</number>
+                     </property>
+                     <widget class="QWidget" name="uniformCoefficientPage">
+                      <layout class="QVBoxLayout" name="verticalLayout_4">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="coefficientLabel">
+                         <property name="text">
+                          <string>Coefficient :</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="ABCIntervalDoubleWidget" name="uniformCoefficientABC" native="true"/>
+                       </item>
+                       <item>
+                        <spacer name="verticalSpacer_2">
+                         <property name="orientation">
+                          <enum>Qt::Vertical</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>20</width>
+                           <height>0</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="latitudinalCoefficientPage">
+                      <layout class="QVBoxLayout" name="verticalLayout_5">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="northCoefficientLabel">
+                         <property name="text">
+                          <string>North coefficient :</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="ABCIntervalDoubleWidget" name="northCoefficientABC" native="true"/>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="southCoefficientLabel">
+                         <property name="text">
+                          <string>South coefficient :</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="ABCIntervalDoubleWidget" name="southCoefficientABC" native="true"/>
+                       </item>
+                      </layout>
+                     </widget>
+                     <widget class="QWidget" name="longitudinalCoefficientPage">
+                      <layout class="QVBoxLayout" name="verticalLayout_6">
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <widget class="QLabel" name="eastCoefficientLabel">
+                         <property name="text">
+                          <string>East coefficient :</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="ABCIntervalDoubleWidget" name="eastCoefficientABC" native="true"/>
+                       </item>
+                       <item>
+                        <widget class="QLabel" name="westCoefficientLabel">
+                         <property name="text">
+                          <string>West coefficient :</string>
+                         </property>
+                        </widget>
+                       </item>
+                       <item>
+                        <widget class="ABCIntervalDoubleWidget" name="westCoefficientABC" native="true"/>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
+                   </item>
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="selectionModelLabel">
+                     <property name="text">
+                      <string>Model :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QComboBox" name="heterogeneityComboBox">
+                     <item>
+                      <property name="text">
+                       <string>Uniform</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Latitudinal</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>Longitudinal</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="worldGroupBox">
+                  <property name="title">
+                   <string>World map</string>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout_5">
+                   <item row="0" column="0">
+                    <widget class="QLabel" name="mapWidthLabel">
+                     <property name="text">
+                      <string>Width :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="0" column="1">
+                    <widget class="QSpinBox" name="mapWidthSpinBox">
+                     <property name="keyboardTracking">
+                      <bool>false</bool>
+                     </property>
+                     <property name="suffix">
+                      <string> demes</string>
+                     </property>
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QLabel" name="mapHeightLabel">
+                     <property name="text">
+                      <string>Height :</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="1">
+                    <widget class="QSpinBox" name="mapHeightSpinBox">
+                     <property name="keyboardTracking">
+                      <bool>false</bool>
+                     </property>
+                     <property name="suffix">
+                      <string> demes</string>
+                     </property>
+                     <property name="minimum">
+                      <number>1</number>
+                     </property>
+                     <property name="maximum">
+                      <number>999999999</number>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QGroupBox" name="outputGroupBox">
+                  <property name="title">
+                   <string>Output</string>
+                  </property>
+                  <layout class="QFormLayout" name="formLayout_4">
+                   <item row="0" column="0">
+                    <widget class="QCheckBox" name="completeHistoryCheckBox">
+                     <property name="text">
+                      <string>Complete history of last simulation</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="demesParamTab">
+           <attribute name="title">
+            <string>Demes parameters</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout"/>
+          </widget>
+          <widget class="QWidget" name="routesTab">
+           <attribute name="title">
+            <string>Routes</string>
+           </attribute>
+          </widget>
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="geneticsGroupBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
+         <widget class="QFrame" name="mapWidgetFrame">
+          <property name="frameShape">
+           <enum>QFrame::Panel</enum>
           </property>
-          <property name="title">
-           <string>Genetics</string>
+          <property name="frameShadow">
+           <enum>QFrame::Raised</enum>
           </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
+          <layout class="QVBoxLayout" name="verticalLayout_14">
            <item>
-            <widget class="QWidget" name="widget" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout_2">
-              <property name="leftMargin">
-               <number>0</number>
-              </property>
-              <property name="topMargin">
-               <number>0</number>
-              </property>
-              <property name="rightMargin">
-               <number>0</number>
-              </property>
-              <property name="bottomMargin">
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QRadioButton" name="uniquePoolRadioButton">
-                <property name="toolTip">
-                 <string>All initial population sources are constituted from one single gene pool</string>
-                </property>
+            <layout class="QHBoxLayout" name="horizontalLayout_3">
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>Display mode :</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QComboBox" name="displayModeComboBox">
+               <item>
                 <property name="text">
-                 <string>Unique allele pool</string>
+                 <string>Groups</string>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="multiplePoolRadioButton">
-                <property name="toolTip">
-                 <string>Each initial population group is derived from independent ancestral gene pools</string>
-                </property>
+               </item>
+               <item>
                 <property name="text">
-                 <string>Multiple allele pools</string>
+                 <string>Initial populations</string>
                 </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="numberOfInitialAllelesLabel">
-             <property name="text">
-              <string>Number of initial alleles :</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ABCIntervalIntWidget" name="initialAllelePoolSizeABC" native="true"/>
-           </item>
-           <item>
-            <widget class="QLabel" name="mutationRateLabel">
-             <property name="toolTip">
-              <string>Defines the probability that new alleles appear (mutation rate per individual per generation)</string>
-             </property>
-             <property name="text">
-              <string>Mutation rate :</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ABCIntervalDoubleWidget" name="mutationRateABC" native="true"/>
-           </item>
-           <item>
-            <widget class="QCheckBox" name="initialFrequencyCheckBox">
-             <property name="text">
-              <string>Set initial frequency of first allele (a1)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="ABCIntervalDoubleWidget" name="firstAlleleFrequencyABC" native="true">
-             <property name="enabled">
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="selectionGroupBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title">
-           <string>Selection</string>
-          </property>
-          <layout class="QGridLayout" name="gridLayout_3">
-           <item row="1" column="0">
-            <widget class="QLabel" name="heterogeneityLabel">
-             <property name="text">
-              <string>Heterogeneity :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QComboBox" name="selectionModelComboBox">
-             <property name="sizeAdjustPolicy">
-              <enum>QComboBox::AdjustToContents</enum>
-             </property>
-             <item>
-              <property name="text">
-               <string>SOS</string>
-              </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Carrying capacities</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Growth rates</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Migration rates</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Samples sizes</string>
+                </property>
+               </item>
+              </widget>
              </item>
              <item>
-              <property name="text">
-               <string>FDS</string>
-              </property>
+              <widget class="QLabel" name="label_2">
+               <property name="text">
+                <string>Selection tools :</string>
+               </property>
+              </widget>
              </item>
              <item>
-              <property name="text">
-               <string>DPS</string>
-              </property>
-             </item>
-            </widget>
-           </item>
-           <item row="2" column="0" colspan="2">
-            <widget class="QStackedWidget" name="coefficientStackedWidget">
-             <property name="currentIndex">
-              <number>0</number>
-             </property>
-             <widget class="QWidget" name="uniformCoefficientPage">
-              <layout class="QVBoxLayout" name="verticalLayout_4">
-               <property name="leftMargin">
-                <number>0</number>
+              <widget class="QPushButton" name="penToolPushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="topMargin">
-                <number>0</number>
+               <property name="toolTip">
+                <string>Select the demes under the mouse cursor while holding the mouse button.</string>
                </property>
-               <property name="rightMargin">
-                <number>0</number>
+               <property name="text">
+                <string/>
                </property>
-               <property name="bottomMargin">
-                <number>0</number>
+               <property name="icon">
+                <iconset resource="icons.qrc">
+                 <normaloff>:/icons/stock-tool-pencil-22.png</normaloff>:/icons/stock-tool-pencil-22.png</iconset>
                </property>
-               <item>
-                <widget class="QLabel" name="coefficientLabel">
-                 <property name="text">
-                  <string>Coefficient :</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ABCIntervalDoubleWidget" name="uniformCoefficientABC" native="true"/>
-               </item>
-               <item>
-                <spacer name="verticalSpacer_2">
-                 <property name="orientation">
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="latitudinalCoefficientPage">
-              <layout class="QVBoxLayout" name="verticalLayout_5">
-               <property name="leftMargin">
-                <number>0</number>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
-               <property name="topMargin">
-                <number>0</number>
+               <property name="checked">
+                <bool>true</bool>
                </property>
-               <property name="rightMargin">
-                <number>0</number>
+               <property name="autoExclusive">
+                <bool>true</bool>
                </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="northCoefficientLabel">
-                 <property name="text">
-                  <string>North coefficient :</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ABCIntervalDoubleWidget" name="northCoefficientABC" native="true"/>
-               </item>
-               <item>
-                <widget class="QLabel" name="southCoefficientLabel">
-                 <property name="text">
-                  <string>South coefficient :</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ABCIntervalDoubleWidget" name="southCoefficientABC" native="true"/>
-               </item>
-              </layout>
-             </widget>
-             <widget class="QWidget" name="longitudinalCoefficientPage">
-              <layout class="QVBoxLayout" name="verticalLayout_6">
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="eastCoefficientLabel">
-                 <property name="text">
-                  <string>East coefficient :</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ABCIntervalDoubleWidget" name="eastCoefficientABC" native="true"/>
-               </item>
-               <item>
-                <widget class="QLabel" name="westCoefficientLabel">
-                 <property name="text">
-                  <string>West coefficient :</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ABCIntervalDoubleWidget" name="westCoefficientABC" native="true"/>
-               </item>
-              </layout>
-             </widget>
-            </widget>
-           </item>
-           <item row="0" column="0">
-            <widget class="QLabel" name="selectionModelLabel">
-             <property name="text">
-              <string>Model :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QComboBox" name="heterogeneityComboBox">
-             <item>
-              <property name="text">
-               <string>Uniform</string>
-              </property>
+              </widget>
              </item>
              <item>
-              <property name="text">
-               <string>Latitudinal</string>
-              </property>
+              <widget class="QPushButton" name="boxToolPushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Select a rectangle shaped group of demes.</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="icons.qrc">
+                 <normaloff>:/icons/stock-tool-rect-select-22.png</normaloff>:/icons/stock-tool-rect-select-22.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
              <item>
-              <property name="text">
-               <string>Longitudinal</string>
-              </property>
+              <widget class="QPushButton" name="magicToolPushButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="toolTip">
+                <string>Select all demes from the map that share the same value currently displayed.</string>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="icons.qrc">
+                 <normaloff>:/icons/stock-tool-fuzzy-select-22.png</normaloff>:/icons/stock-tool-fuzzy-select-22.png</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoExclusive">
+                <bool>true</bool>
+               </property>
+              </widget>
              </item>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="worldGroupBox">
-          <property name="title">
-           <string>World map</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_5">
-           <item row="0" column="0">
-            <widget class="QLabel" name="mapWidthLabel">
-             <property name="text">
-              <string>Width :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="QSpinBox" name="mapWidthSpinBox">
-             <property name="keyboardTracking">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> demes</string>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>999999999</number>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="mapHeightLabel">
-             <property name="text">
-              <string>Height :</string>
-             </property>
-            </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="QSpinBox" name="mapHeightSpinBox">
-             <property name="keyboardTracking">
-              <bool>false</bool>
-             </property>
-             <property name="suffix">
-              <string> demes</string>
-             </property>
-             <property name="minimum">
-              <number>1</number>
-             </property>
-             <property name="maximum">
-              <number>999999999</number>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="outputGroupBox">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="title">
-           <string>Output</string>
-          </property>
-          <layout class="QFormLayout" name="formLayout_4">
-           <item row="0" column="0">
-            <widget class="QCheckBox" name="completeHistoryCheckBox">
-             <property name="text">
-              <string>Complete history of last simulation</string>
-             </property>
-            </widget>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="demesTab">
-       <attribute name="title">
-        <string>Demes</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2"/>
+      <widget class="LogWidget" name="logWidget">
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
       </widget>
-      <widget class="QWidget" name="routesTab">
-       <attribute name="title">
-        <string>Routes</string>
-       </attribute>
-      </widget>
-     </widget>
-    </item>
-    <item row="0" column="1">
-     <widget class="QFrame" name="demesParamFrame">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="frameShape">
-       <enum>QFrame::Panel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_12">
-       <item>
-        <widget class="QGroupBox" name="displayModeGroupBox">
-         <property name="title">
-          <string>Display mode</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout_13">
-          <item>
-           <widget class="QComboBox" name="displayModeComboBox">
-            <item>
-             <property name="text">
-              <string>Groups</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Initial populations</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Carrying capacities</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Growth rates</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Migration rates</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>Samples sizes</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="selectionToolsGroupBox">
-         <property name="title">
-          <string>Deme selection tools</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout">
-          <item>
-           <widget class="QPushButton" name="penToolPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Select the demes under the mouse cursor while holding the mouse button.</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="icons.qrc">
-              <normaloff>:/icons/stock-tool-pencil-22.png</normaloff>:/icons/stock-tool-pencil-22.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="boxToolPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Select a rectangle shaped group of demes.</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="icons.qrc">
-              <normaloff>:/icons/stock-tool-rect-select-22.png</normaloff>:/icons/stock-tool-rect-select-22.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="magicToolPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Select all demes from the map that share the same value currently displayed.</string>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="icon">
-             <iconset resource="icons.qrc">
-              <normaloff>:/icons/stock-tool-fuzzy-select-22.png</normaloff>:/icons/stock-tool-fuzzy-select-22.png</iconset>
-            </property>
-            <property name="checkable">
-             <bool>true</bool>
-            </property>
-            <property name="autoExclusive">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-      <zorder>displayModeGroupBox</zorder>
-      <zorder>selectionToolsGroupBox</zorder>
-      <zorder>verticalSpacer</zorder>
-     </widget>
-    </item>
-    <item row="0" column="2" rowspan="2">
-     <widget class="QFrame" name="mapWidgetFrame">
-      <property name="frameShape">
-       <enum>QFrame::Panel</enum>
-      </property>
-      <property name="frameShadow">
-       <enum>QFrame::Raised</enum>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_14"/>
      </widget>
     </item>
    </layout>
-   <zorder>demesParamFrame</zorder>
-   <zorder>logWidget</zorder>
-   <zorder>mapWidgetFrame</zorder>
-   <zorder>tabWidget</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1067</width>
+     <width>1181</width>
      <height>27</height>
     </rect>
    </property>
@@ -875,12 +868,12 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>231</x>
-     <y>492</y>
+     <x>311</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
-     <x>37</x>
-     <y>547</y>
+     <x>325</x>
+     <y>404</y>
     </hint>
    </hints>
   </connection>
