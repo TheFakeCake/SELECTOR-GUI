@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>293</width>
-    <height>33</height>
+    <width>193</width>
+    <height>68</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_2">
+  <layout class="QGridLayout" name="gridLayout">
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -26,7 +26,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <item>
+   <item row="1" column="0">
     <widget class="QStackedWidget" name="stackedWidget">
      <property name="currentIndex">
       <number>0</number>
@@ -65,12 +65,6 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QSpinBox" name="firstBound"/>
-       </item>
-       <item>
-        <widget class="QSpinBox" name="secondBound"/>
-       </item>
-       <item>
         <widget class="QComboBox" name="distribution">
          <item>
           <property name="text">
@@ -93,12 +87,22 @@
      </widget>
     </widget>
    </item>
-   <item>
+   <item row="1" column="1">
     <widget class="QCheckBox" name="ABC">
      <property name="text">
       <string>ABC</string>
      </property>
     </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="QSpinBox" name="firstBound"/>
+     </item>
+     <item>
+      <widget class="QSpinBox" name="secondBound"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

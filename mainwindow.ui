@@ -62,6 +62,9 @@
               <property name="horizontalScrollBarPolicy">
                <enum>Qt::ScrollBarAlwaysOff</enum>
               </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QAbstractScrollArea::AdjustToContents</enum>
+              </property>
               <property name="widgetResizable">
                <bool>true</bool>
               </property>
@@ -69,9 +72,9 @@
                <property name="geometry">
                 <rect>
                  <x>0</x>
-                 <y>-164</y>
+                 <y>0</y>
                  <width>335</width>
-                 <height>658</height>
+                 <height>628</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -108,7 +111,7 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0" colspan="2">
+                   <item row="1" column="1">
                     <widget class="ABCIntervalIntWidget" name="numberOfGenerationsABC" native="true"/>
                    </item>
                   </layout>
@@ -162,14 +165,18 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLabel" name="numberOfInitialAllelesLabel">
-                     <property name="text">
-                      <string>Number of initial alleles :</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="ABCIntervalIntWidget" name="initialAllelePoolSizeABC" native="true"/>
+                    <layout class="QFormLayout" name="formLayout">
+                     <item row="0" column="0">
+                      <widget class="QLabel" name="numberOfInitialAllelesLabel">
+                       <property name="text">
+                        <string>Number of initial alleles :</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item row="0" column="1">
+                      <widget class="ABCIntervalIntWidget" name="initialAllelePoolSizeABC" native="true"/>
+                     </item>
+                    </layout>
                    </item>
                    <item>
                     <widget class="QLabel" name="mutationRateLabel">
@@ -214,24 +221,21 @@
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="1">
-                    <widget class="QComboBox" name="selectionModelComboBox">
-                     <property name="sizeAdjustPolicy">
-                      <enum>QComboBox::AdjustToContents</enum>
-                     </property>
+                   <item row="1" column="1">
+                    <widget class="QComboBox" name="heterogeneityComboBox">
                      <item>
                       <property name="text">
-                       <string>SOS</string>
+                       <string>Uniform</string>
                       </property>
                      </item>
                      <item>
                       <property name="text">
-                       <string>FDS</string>
+                       <string>Latitudinal</string>
                       </property>
                      </item>
                      <item>
                       <property name="text">
-                       <string>DPS</string>
+                       <string>Longitudinal</string>
                       </property>
                      </item>
                     </widget>
@@ -354,30 +358,33 @@
                      </widget>
                     </widget>
                    </item>
+                   <item row="0" column="1">
+                    <widget class="QComboBox" name="selectionModelComboBox">
+                     <property name="sizeAdjustPolicy">
+                      <enum>QComboBox::AdjustToContents</enum>
+                     </property>
+                     <item>
+                      <property name="text">
+                       <string>SOS</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>FDS</string>
+                      </property>
+                     </item>
+                     <item>
+                      <property name="text">
+                       <string>DPS</string>
+                      </property>
+                     </item>
+                    </widget>
+                   </item>
                    <item row="0" column="0">
                     <widget class="QLabel" name="selectionModelLabel">
                      <property name="text">
                       <string>Model :</string>
                      </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QComboBox" name="heterogeneityComboBox">
-                     <item>
-                      <property name="text">
-                       <string>Uniform</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Latitudinal</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text">
-                       <string>Longitudinal</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                   </layout>

@@ -7,6 +7,8 @@ ABCIntervalIntWidget::ABCIntervalIntWidget(QWidget *parent) :
     ui(new Ui::ABCIntervalIntWidget)
 {
     ui->setupUi(this);
+    ui->firstBound->hide();
+    ui->secondBound->hide();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -67,6 +69,8 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
             ui->ABC->setChecked(false);
             ui->stackedWidget->setCurrentWidget(ui->singleValuePage);
             ui->singleValue->setValue(value.firstBound());
+            ui->firstBound->hide();
+            ui->secondBound->hide();
         }
         else
         {
@@ -75,6 +79,8 @@ void ABCIntervalIntWidget::setValue(const ABCInterval<int> &value)
             ui->firstBound->setValue(value.firstBound());
             ui->secondBound->setValue(value.secondBound());
             ui->distribution->setCurrentIndex(value.distribution());
+            ui->firstBound->show();
+            ui->secondBound->show();
         }
         blockSignals(false);
 
@@ -113,12 +119,16 @@ void ABCIntervalIntWidget::on_ABC_toggled(bool checked)
         ui->firstBound->setValue(ui->singleValue->value());
         ui->secondBound->setValue(ui->singleValue->value());
         ui->stackedWidget->setCurrentIndex(1);
+        ui->firstBound->show();
+        ui->secondBound->show();
         blockSignals(false);
     }
     else
     {
         ui->singleValue->setValue(ui->firstBound->value());
         ui->stackedWidget->setCurrentIndex(0);
+        ui->firstBound->hide();
+        ui->secondBound->hide();
 
         // Emit a valueChanged signal only if the interval wasn't a single value
         if (ui->firstBound->value() != ui->secondBound->value())

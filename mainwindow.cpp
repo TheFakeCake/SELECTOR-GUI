@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // ABCIntervalWidgets configuration
     ui->numberOfGenerationsABC->setMinimumValue(1);
-    ui->numberOfGenerationsABC->setMaximumValue(99999999);
+    ui->numberOfGenerationsABC->setMaximumValue(999999);
     ui->initialAllelePoolSizeABC->setMinimumValue(1);
     ui->initialAllelePoolSizeABC->setMaximumValue(99999999);
     ui->mutationRateABC->setMinimumValue(0.0);
