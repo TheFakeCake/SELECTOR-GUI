@@ -28,10 +28,12 @@ public slots:
 
 private slots:
 
+    // Actions
     void on_action_OpenSimulation_triggered();
     void on_action_Save_triggered();
     void on_action_SaveAs_triggered();
 
+    // Demes selection tools buttons events
     void on_penToolPushButton_toggled(bool b);
     void on_boxToolPushButton_toggled(bool b);
     void on_magicToolPushButton_toggled(bool b);

@@ -98,7 +98,6 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     // Simulation Map -> Vuew connections
     connect(m_simulation.map(), SIGNAL(widthChanged(int)), ui->mapWidthSpinBox, SLOT(setValue(int)));
     connect(m_simulation.map(), SIGNAL(heightChanged(int)), ui->mapHeightSpinBox, SLOT(setValue(int)));
-    connect(m_simulation.map(), SIGNAL(changed()), m_mapWidget, SLOT(repaint()));
 
     // View -> Simulation Map connections
     connect(ui->mapWidthSpinBox, SIGNAL(valueChanged(int)), m_simulation.map(), SLOT(setWidth(int)));
@@ -190,7 +189,7 @@ void MainWindow::on_action_Save_triggered()
     if (! m_configFiles.write(&m_simulation))
     {
         QMessageBox::warning(this, tr("SELECTOR-GUI"),
-                             tr("Something happened while saving the simulation configuration. See the log for more details.") + m_configFiles.errorMessages().join('\n'));
+                             tr("Something happened while saving the simulation configuration. See the log for more details."));
     }
     m_simulationFromConfigFiles = true;
 }
@@ -210,7 +209,7 @@ void MainWindow::on_action_SaveAs_triggered()
     if (! m_configFiles.write(&m_simulation))
     {
         QMessageBox::warning(this, tr("SELECTOR-GUI"),
-                             tr("Something happened while saving the simulation configuration. See the log for more details.") + m_configFiles.errorMessages().join('\n'));
+                             tr("Something happened while saving the simulation configuration. See the log for more details."));
     }
 
     m_simulationFromConfigFiles = true;
