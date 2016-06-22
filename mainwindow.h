@@ -20,6 +20,8 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    bool eventFilter(QObject *object, QEvent *event);
+
 public slots:
 
     void updateView();

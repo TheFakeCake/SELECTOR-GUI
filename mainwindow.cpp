@@ -18,12 +18,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     // Add the demes parameter widget
     m_demesParamWidget = new DemesParamWidget(m_mapWidget);
-    ui->demesParamTab->layout()->addWidget(m_demesParamWidget);
+    ((QVBoxLayout*)ui->demesParamTab->layout())->insertWidget(0, m_demesParamWidget);
 
     // General UI configuration
     ui->firstAlleleFrequencyABC->layout()->setContentsMargins(25, 0, 0, 0);
     ui->splitter->setCollapsible(0, false);
     ui->splitter->setSizes(QList<int>() << 1 << 0);
+
+    // Prevent the QSpinBox and QDoubleSpinBox widgets inside the scroll area to catch mouse wheel events
+    // so they don't interrupt scrolling
+    Q_FOREACH(QAbstractSpinBox *sp, ui->settingsScrollArea->findChildren<QAbstractSpinBox*>())
+    {
+        sp->installEventFilter(this);
+        sp->setFocusPolicy(Qt::StrongFocus);
+    }
 
     // ABCIntervalWidgets configuration
     ui->numberOfGenerationsABC->setMinimumValue(1);
@@ -103,6 +111,18 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+bool MainWindow::eventFilter(QObject *object, QEvent *event)
+{
+    // Ignore the event if it is coming from the mouse wheel and if the object is a QAbstractSpinBox
+    if (event->type() == QEvent::Wheel && qobject_cast<QAbstractSpinBox*>(object))
+    {
+        event->ignore();
+        return true;
+    }
+    return QWidget::eventFilter(object, event);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
