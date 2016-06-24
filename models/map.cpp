@@ -105,6 +105,7 @@ bool Map::setRoute(int fromX, int fromY, int toX, int toY, double factor)
     }
 
     m_routes[fromDeme][toDeme] = factor;
+    emit routesChanged();
     return true;
 }
 
@@ -127,6 +128,7 @@ bool Map::deleteRoute(int fromX, int fromY, int toX, int toY)
     {
         m_routes.erase(fromDeme);
     }
+    emit routesChanged();
     return true;
 }
 

@@ -32,7 +32,9 @@ SOURCES += main.cpp\
     gui/ABCIntervalDoubleWidget.cpp \
     gui/ABCIntervalIntWidget.cpp \
     gui/VaryingABCIntervalIntWidget.cpp \
-    gui/VaryingABCIntervalDoubleWidget.cpp
+    gui/VaryingABCIntervalDoubleWidget.cpp \
+    gui/RoutesTableWidget.cpp \
+    models/RoutesTableModel.cpp
 
 HEADERS  += mainwindow.h \
     models/simulationmodel.h \
@@ -53,7 +55,9 @@ HEADERS  += mainwindow.h \
     gui/ABCIntervalDoubleWidget.h \
     gui/ABCIntervalIntWidget.h \
     gui/VaryingABCIntervalIntWidget.h \
-    gui/VaryingABCIntervalDoubleWidget.h
+    gui/VaryingABCIntervalDoubleWidget.h \
+    gui/RoutesTableWidget.h \
+    models/RoutesTableModel.h
 
 FORMS    += mainwindow.ui \
     gui/DemesParamWidget.ui \

@@ -497,6 +497,11 @@
            <attribute name="title">
             <string>Routes</string>
            </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_9">
+            <item>
+             <widget class="RoutesTableWidget" name="routesTableWidget"/>
+            </item>
+           </layout>
           </widget>
          </widget>
         </item>
@@ -866,6 +871,11 @@
    <extends>QWidget</extends>
    <header>gui/ABCIntervalDoubleWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>RoutesTableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>gui/RoutesTableWidget.h</header>
   </customwidget>
  </customwidgets>
  <resources>
