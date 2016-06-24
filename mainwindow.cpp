@@ -32,6 +32,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
         sp->installEventFilter(this);
         sp->setFocusPolicy(Qt::StrongFocus);
     }
+    Q_FOREACH(QComboBox *sp, ui->settingsScrollArea->findChildren<QComboBox*>())
+    {
+        sp->installEventFilter(this);
+        sp->setFocusPolicy(Qt::StrongFocus);
+    }
 
     // ABCIntervalWidgets configuration
     ui->numberOfGenerationsABC->setMinimumValue(1);
@@ -116,7 +121,7 @@ MainWindow::~MainWindow()
 bool MainWindow::eventFilter(QObject *object, QEvent *event)
 {
     // Ignore the event if it is coming from the mouse wheel and if the object is a QAbstractSpinBox
-    if (event->type() == QEvent::Wheel && qobject_cast<QAbstractSpinBox*>(object))
+    if (event->type() == QEvent::Wheel && (qobject_cast<QAbstractSpinBox*>(object) || qobject_cast<QComboBox*>(object)))
     {
         event->ignore();
         return true;
