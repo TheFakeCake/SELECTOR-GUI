@@ -6,7 +6,8 @@ Map::Map() : Map(1, 1)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-Map::Map(int width, int height) : QObject()
+Map::Map(int width, int height) :
+    QObject()
 {
     if (width == 0)
     {
@@ -18,6 +19,8 @@ Map::Map(int width, int height) : QObject()
     }
     setHeight(height);
     setWidth(width);
+
+    m_routes = new RoutesTableModel(this);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -28,6 +31,7 @@ Map::~Map()
     {
         delete it->second;
     }
+    delete m_routes;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,52 +88,9 @@ void Map::removeAllModifications()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-const std::map<Deme*, std::map<Deme*, double> >& Map::routes() const
+RoutesTableModel* Map::routes()
 {
     return m_routes;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::setRoute(int fromX, int fromY, int toX, int toY, double factor)
-{
-    Deme *fromDeme = deme(fromX, fromY);
-    Deme *toDeme = deme(toX, toY);
-    int absXDiff = abs(toX - fromX);
-    int absYDiff = abs(toY - fromY);
-
-    // Check if route goes between two adjacent demes
-    if (fromDeme == nullptr || toDeme == nullptr || fromDeme == toDeme ||
-        absXDiff > 1 || absYDiff > 1 || absXDiff == absYDiff)
-    {
-        return false;
-    }
-
-    m_routes[fromDeme][toDeme] = factor;
-    emit routesChanged();
-    return true;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-bool Map::deleteRoute(int fromX, int fromY, int toX, int toY)
-{
-    Deme *fromDeme = deme(fromX, fromY);
-    Deme *toDeme = deme(toX, toY);
-
-    // Check if the route exists
-    if (fromDeme == nullptr || toDeme == nullptr ||
-        m_routes.count(fromDeme) == 0 || m_routes[fromDeme].count(toDeme) == 0)
-    {
-        return false;
-    }
-
-    // Remove the route
-    m_routes[fromDeme].erase(toDeme);
-    if (m_routes[fromDeme].empty())
-    {
-        m_routes.erase(fromDeme);
-    }
-    emit routesChanged();
-    return true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,15 +249,6 @@ void Map::setWidth(int width)
         return;
     }
 
-    // Remove the routes including by the removed demes
-    for (int y = 0; y < height(); y++)
-    {
-        for (int x = width; x < oldWidth; x++)
-        {
-            _removeRoutes(m_demes[y][x]);
-        }
-    }
-
     // Set the width for each row
     for (int y = 0; y < height(); y++)
     {
@@ -328,16 +280,6 @@ void Map::setHeight(int height)
     if (height == oldHeight)
     {
         return;
-    }
-
-    // Remove the routes including removed demes and delete de demes
-    for (int y = height; y < oldHeight; y++)
-    {
-        for (int x = 0; x < width(); x++)
-        {
-            _removeRoutes(m_demes[y][x]);
-            m_demes[y][x]->deleteLater();
-        }
     }
 
     m_demes.resize(height);
@@ -378,18 +320,5 @@ void Map::_setRowWidth(std::vector<Deme*>& row, int rowY, int width)
             Deme *newDeme = new Deme(this, x, rowY);
             row.push_back(newDeme);
         }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-void Map::_removeRoutes(Deme *deme)
-{
-    // Remove routes starting from deme
-    m_routes.erase(deme);
-
-    // Remove routes finishing to deme
-    for (auto it = m_routes.begin(); it != m_routes.end(); it++)
-    {
-        it->second.erase(deme);
     }
 }

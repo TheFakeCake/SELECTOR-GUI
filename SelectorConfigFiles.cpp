@@ -628,21 +628,17 @@ bool SelectorConfigFiles::write(SimulationModel *sim)
         << "0\t// All demes within a group have the same demography. 0: No | 1: Yes\n";
 
     // Routes
-    Map::Routes routes = sim->map()->routes();
-    int nbRoutes = 0;
+    const QList<QPair<QPoint, QPoint> > &routes = sim->map()->routes()->getAll();
     QString routesLine = "";
 
-    for (auto fromIt = routes.begin(); fromIt != routes.end(); fromIt++)
+    for (int i = 0; i < routes.size(); i++)
     {
-        for (auto toIt = fromIt->second.begin(); toIt != fromIt->second.end(); toIt++)
-        {
-            nbRoutes++;
-            routesLine += QString("(%1,%2,%3) ").arg(fromIt->first->x() + fromIt->first->y() * sim->map()->width())
-                                                .arg(toIt->first->x() + toIt->first->y() * sim->map()->width())
-                                                .arg(toIt->second);
-        }
+        routesLine += QString("(%1,%2,%3) ").arg(routes[i].first.x() + routes[i].first.y() * sim->map()->width())
+                                            .arg(routes[i].second.x() + routes[i].second.y() * sim->map()->width())
+                                            .arg(sim->map()->routes()->routeFactorAt(i));
     }
-    out << nbRoutes << "\t// Number of routes\n"
+
+    out << routes.size() << "\t// Number of routes\n"
         << routesLine << "\n";
 
     // Poulation structures
@@ -802,9 +798,9 @@ void SelectorConfigFiles::_handleParamLine(SimulationModel *sim, int line, QRegE
             int fromDemeIndex = routeRegex.cap(1).toInt();
             int toDemeIndex = routeRegex.cap(2).toInt();
             double factor = routeRegex.cap(3).toDouble();
-            sim->map()->setRoute(fromDemeIndex % sim->map()->width(), fromDemeIndex / sim->map()->width(),
-                                 toDemeIndex % sim->map()->width(), toDemeIndex / sim->map()->width(),
-                                 factor);
+            sim->map()->routes()->set(QPoint(fromDemeIndex % sim->map()->width(), fromDemeIndex / sim->map()->width()),
+                                      QPoint(toDemeIndex % sim->map()->width(), toDemeIndex / sim->map()->width()),
+                                      factor);
             pos += routeRegex.matchedLength();
             nbRoutes--;
         }

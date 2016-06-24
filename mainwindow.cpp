@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->splitter->setCollapsible(0, false);
     ui->splitter->setSizes(QList<int>() << 1 << 0);
 
-    ui->routesTableWidget->setMap(m_simulation.map());
+    ui->routesTableView->setModel(m_simulation.map()->routes());
 
     // Prevent the QSpinBox, QDoubleSpinBox and QComboBox widgets inside the scroll area to catch
     // mouse wheel events so they don't interrupt scrolling

@@ -6,6 +6,7 @@
 #include <map>
 #include <list>
 #include "MapStructureModifier.h"
+#include "RoutesTableModel.h"
 
 class Deme;
 
@@ -17,8 +18,6 @@ class Map : public QObject
 
 public:
 
-    typedef std::map<Deme*, std::map<Deme*, double> > Routes;
-
     Map();
     Map(int width, int height);
     ~Map();
@@ -29,9 +28,7 @@ public:
     void removeModification(int generation);
     void removeAllModifications();
 
-    const Routes& routes() const;
-    bool setRoute(int fromX, int fromY, int toX, int toY, double factor);
-    bool deleteRoute(int fromX, int fromY, int toX, int toY);
+    RoutesTableModel* routes();
 
     int width() const;
     int height() const;
@@ -54,18 +51,16 @@ signals:
 
     void widthChanged(int newWidth);
     void heightChanged(int newHeight);
-    void routesChanged();
     void demeChanged(Deme *changedDeme);
     void changed();
 
 protected:
 
     void _setRowWidth(std::vector<Deme*>& row, int rowY, int width);
-    void _removeRoutes(Deme *deme);
 
     std::vector<std::vector<Deme*> > m_demes;
     std::map<int, MapStructureModifier*> m_modifications;
-    Routes m_routes;
+    RoutesTableModel *m_routes;
 };
 
 #endif // MAP_H

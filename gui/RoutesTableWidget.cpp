@@ -26,6 +26,7 @@ void RoutesTableWidget::setMap(Map *map)
 
 void RoutesTableWidget::updateView()
 {
+    /*
     const std::map<Deme*, std::map<Deme*, double> > &routes = m_map->routes();
     int rowCount = 0;
     for (auto srcIt = routes.begin(); srcIt != routes.end(); srcIt++)
@@ -46,5 +47,6 @@ void RoutesTableWidget::updateView()
     {
         removeRow(rowCount);
     }
+    */
 }
 
