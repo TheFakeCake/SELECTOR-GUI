@@ -1,6 +1,7 @@
 #include "MapWidget.h"
 
 #include <QPainter>
+#include <QMenu>
 #include "CursorSelectTool.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,7 +35,10 @@ MapWidget::MapWidget(Map *map, QWidget *parent) :
     m_selectTool(nullptr)
 {
     setAttribute(Qt::WA_StaticContents);
+    setContextMenuPolicy(Qt::CustomContextMenu);
     setSelectTool(new CursorSelectTool());
+    connect(this, SIGNAL(customContextMenuRequested(const QPoint &)),
+            this, SLOT(showContextMenu(const QPoint &)));
     connect(m_map, SIGNAL(changed()), this, SLOT(updateWidget()));
     updateImage();
 }
@@ -249,6 +253,31 @@ void MapWidget::setSelectTool(AbstractSelectTool *tool)
     delete m_selectTool;
     tool->setMapWidget(this);
     m_selectTool = tool;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void MapWidget::showContextMenu(const QPoint &pos)
+{
+    QPoint demeCoord(pos.x() / m_demeSize, pos.y() / m_demeSize);
+
+    if (demeCoord.x() >= m_map->width() || demeCoord.y() >= m_map->height())
+    {
+        return;
+    }
+
+    QMenu contextMenu("Context menu", this);
+
+    QAction action1("Create route from this deme", this);
+    connect(&action1, SIGNAL(triggered()), this, SLOT(onCreateRouteTriggered()));
+    contextMenu.addAction(&action1);
+
+    contextMenu.exec(mapToGlobal(pos));
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+void MapWidget::onCreateRouteTriggered()
+{
+    qDebug("Create Route");
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////

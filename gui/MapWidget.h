@@ -66,6 +66,11 @@ public slots:
     void setDisplayMode(int mode);
     void setSelectTool(AbstractSelectTool *tool);
 
+private slots:
+
+    void showContextMenu(const QPoint &pos);
+    void onCreateRouteTriggered();
+
 private:
 
     void resizeImage(QImage *image, const QSize &newSize);
