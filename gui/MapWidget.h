@@ -28,13 +28,6 @@ public:
         LastDisplayMode
     };
 
-    enum SelectionMode {
-        Cursor = 0,
-        Box,
-        Magic,
-        LastSelectionMode
-    };
-
     static const int NB_GROUP_COLORS = 17;
     static const QColor GROUP_COLORS[NB_GROUP_COLORS];
 

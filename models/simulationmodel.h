@@ -59,7 +59,7 @@ protected:
 
     Selection m_selection;
 
-    double m_outputCompleteHistory;
+    bool m_outputCompleteHistory;
 
     Map m_map;
 };
